@@ -158,28 +158,7 @@ export default async function FacilitiesPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { value: '50+', label: 'Smart Classrooms', icon: '🖥️' },
-              { value: '5', label: 'Science Labs', icon: '🔬' },
-              { value: '25000+', label: 'Library Books', icon: '📚' },
-              { value: '10', label: 'Acres Campus', icon: '🏞️' },
-            ].map((stat, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm text-center hover:shadow-lg transition-shadow"
-              >
-                <span className="text-4xl mb-3 block">{stat.icon}</span>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-gray-500 font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       <Footer siteSettings={site_settings || defaultSettings} quickLinks={quick_links || []} />
     </main>
