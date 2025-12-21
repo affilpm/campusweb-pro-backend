@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     'content',
     # Legacy app (to be removed after migration)
     'authentication',
+    'storages', # Django Storages for R2/S3
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.gzip.GZipMiddleware',  # Optimized for 1GB Server: Compresses responses
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,6 +88,15 @@ DATABASES = {
     }
 }
 
+# Caching - Optimized for 1GB RAM (No Redis)
+# uses the DB instead of RAM for shared state
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'site_cache_table',
+    }
+}
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,6 +131,27 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cloudflare R2 Storage Configuration
+if os.getenv('USE_R2', 'False').lower() == 'true':
+    AWS_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = os.getenv('R2_ENDPOINT_URL')
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_S3_REGION_NAME = 'auto'
+    
+    # Custom Domain (Optional but recommended for public access via Cloudflare)
+    AWS_S3_CUSTOM_DOMAIN = os.getenv('R2_CUSTOM_DOMAIN')
+    
+    # Storage Backends
+    STATICFILES_STORAGE = 'config.storages.StaticStorage'
+    DEFAULT_FILE_STORAGE = 'config.storages.MediaStorage'
+    
+    if AWS_S3_CUSTOM_DOMAIN:
+        STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -135,6 +167,17 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
     'EXCEPTION_HANDLER': 'authentication.utils.custom_exception_handler',
+    
+    # Throttling (Rate Limiting)
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',      # Limit for unauthenticated users
+        'user': '10000/day',    # Limit for authenticated users (adjust as needed)
+        'burst': '60/min',      # Optional custom scope for burst protection
+    },
 }
 
 # Simple JWT Configuration
