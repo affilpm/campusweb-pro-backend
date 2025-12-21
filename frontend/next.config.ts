@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
   /* config options here */
   images: {
     unoptimized: true, // Optimized for 1GB Server: Saves RAM & fixes 'private ip' error
