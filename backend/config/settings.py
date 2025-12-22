@@ -223,6 +223,6 @@ CORS_ALLOW_HEADERS = [
 # Cookie Settings for Refresh Token
 REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
 REFRESH_TOKEN_COOKIE_HTTPONLY = True
-REFRESH_TOKEN_COOKIE_SECURE = not DEBUG  # True in production
+REFRESH_TOKEN_COOKIE_SECURE = False  # Changed to False to allow HTTP login
 REFRESH_TOKEN_COOKIE_SAMESITE = 'Lax'
 REFRESH_TOKEN_COOKIE_PATH = '/'
