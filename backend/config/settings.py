@@ -232,7 +232,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'https://api.affils.site',
     'https://affils.site',
-    # Add your Vercel URL here if needed, e.g. 'https://school-frontend.vercel.app'
+    'https://school-frontend-sandy-nine.vercel.app',  # Vercel Frontend
 ]
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
