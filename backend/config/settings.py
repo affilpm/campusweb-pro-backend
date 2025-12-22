@@ -130,35 +130,43 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudflare R2 Configuration (Mandatory - No Local Storage)
-# Temporarily using R2 instead of AWS S3
+# AWS S3 / CloudFront Configuration
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', 'wavebuckt12')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', 'AKIAR4PDVA446XXOXD4N')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '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')
 
-AWS_ACCESS_KEY_ID = '0523173cd21ea413924cd5663e8119c4'
-AWS_SECRET_ACCESS_KEY = '21e3129a570daac17ca26289540e71e6564815b5f1266606d4ba4db3ca2bde38'
-AWS_STORAGE_BUCKET_NAME = 'school'
-
-# R2 requires the endpoint URL
-AWS_S3_ENDPOINT_URL = 'https://28bbbe3e8d2f386d0fc0a00a59874077.r2.cloudflarestorage.com'
-
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_S3_REGION_NAME = 'auto'
-
-# R2.dev Public Domain
-AWS_S3_CUSTOM_DOMAIN = 'pub-057f5009996946a7b2df09fb3bea1c0c.r2.dev'
-
-# Cache Control
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# Storage Backends
-STATICFILES_STORAGE = 'config.storages.StaticStorage'
-DEFAULT_FILE_STORAGE = 'config.storages.MediaStorage'
+# Set to False to allow public access to files without query parameters
 AWS_QUERYSTRING_AUTH = False
 
-if AWS_S3_CUSTOM_DOMAIN:
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# CloudFront Domain
+CLOUDFRONT_DOMAIN = os.getenv('CLOUDFRONT_DOMAIN', 'd2isa6df9sgb8p.cloudfront.net')
+
+# Media URL via CloudFront
+MEDIA_URL = f'https://{CLOUDFRONT_DOMAIN}/media/'
+
+# Storage backends using modern Django STORAGES format
+STORAGES = {
+    "default": {
+        "BACKEND": "config.storages.CloudFrontMediaStorage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "location": "media",
+            "file_overwrite": False,
+        }
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    }
+}
+
+# Static files (served locally in dev, can use S3 in production if needed)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Default primary key field type
