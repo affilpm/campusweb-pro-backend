@@ -689,19 +689,19 @@ class ResultsAcademicsPublicListView(ListAPIView):
     """GET /api/public/results-academics/"""
     permission_classes = [AllowAny]
     serializer_class = ResultsAcademicsPublicSerializer
-    queryset = ResultsAcademics.objects.all().order_by('order', 'id')
+    queryset = ResultsAcademics.objects.filter(is_active=True).order_by('order', 'id')
 
 class InfrastructurePublicListView(ListAPIView):
     """GET /api/public/infrastructure/"""
     permission_classes = [AllowAny]
     serializer_class = InfrastructurePublicSerializer
-    queryset = Infrastructure.objects.all().order_by('order', 'id')
+    queryset = Infrastructure.objects.filter(is_active=True).order_by('order', 'id')
 
 class FeesPublicListView(ListAPIView):
     """GET /api/public/fees/"""
     permission_classes = [AllowAny]
     serializer_class = FeesPublicSerializer
-    queryset = Fees.objects.all().order_by('order', 'id')
+    queryset = Fees.objects.filter(is_active=True).order_by('order', 'id')
 
 
 
