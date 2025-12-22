@@ -130,26 +130,35 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudflare R2 Storage Configuration
-if os.getenv('USE_R2', 'False').strip().lower() == 'true':
-    AWS_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
-    AWS_S3_ENDPOINT_URL = os.getenv('R2_ENDPOINT_URL')
-    AWS_S3_SIGNATURE_VERSION = 's3v4'
-    AWS_S3_REGION_NAME = 'auto'
-    
-    # Custom Domain (Optional but recommended for public access via Cloudflare)
-    AWS_S3_CUSTOM_DOMAIN = os.getenv('R2_CUSTOM_DOMAIN')
-    
-    # Storage Backends
-    STATICFILES_STORAGE = 'config.storages.StaticStorage'
-    DEFAULT_FILE_STORAGE = 'config.storages.MediaStorage'
-    AWS_QUERYSTRING_AUTH = False
-    
-    if AWS_S3_CUSTOM_DOMAIN:
-        STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# Cloudflare R2 Configuration (Mandatory - No Local Storage)
+# Temporarily using R2 instead of AWS S3
+
+AWS_ACCESS_KEY_ID = '0523173cd21ea413924cd5663e8119c4'
+AWS_SECRET_ACCESS_KEY = '21e3129a570daac17ca26289540e71e6564815b5f1266606d4ba4db3ca2bde38'
+AWS_STORAGE_BUCKET_NAME = 'school'
+
+# R2 requires the endpoint URL
+AWS_S3_ENDPOINT_URL = 'https://28bbbe3e8d2f386d0fc0a00a59874077.r2.cloudflarestorage.com'
+
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_REGION_NAME = 'auto'
+
+# R2.dev Public Domain
+AWS_S3_CUSTOM_DOMAIN = 'pub-057f5009996946a7b2df09fb3bea1c0c.r2.dev'
+
+# Cache Control
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# Storage Backends
+STATICFILES_STORAGE = 'config.storages.StaticStorage'
+DEFAULT_FILE_STORAGE = 'config.storages.MediaStorage'
+AWS_QUERYSTRING_AUTH = False
+
+if AWS_S3_CUSTOM_DOMAIN:
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 
 # Default primary key field type
@@ -235,6 +244,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'https://api.affils.site',
     'https://affils.site',
+    'https://www.affils.site',
     'https://school-frontend-sandy-nine.vercel.app',  # Vercel Frontend
 ]
 CSRF_COOKIE_SECURE = not DEBUG
