@@ -9,7 +9,27 @@ This guide details the steps to deploy the Django Backend to a DigitalOcean Drop
 
 ---
 
+---
+---
+
 ## 2. Server Setup (First Time)
+
+### ⚠️ Critical Performance Tuning: Add Swap Memory
+**Important:** 1GB Droplets will likely crash without Swap memory when running Docker. Run these commands to create a 2GB swap file:
+
+```bash
+# Check if swap exists
+sudo swapon --show
+
+# If empty, create swap file
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# Make it permanent
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
 
 ### Install Docker & Docker Compose
 Connect to your server via SSH:
