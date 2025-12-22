@@ -66,6 +66,10 @@ from .views import (
     InfrastructureAdminListCreateView, InfrastructureAdminDetailView,
     FeesAdminListCreateView, FeesAdminDetailView,
     
+    # Public Disclosure Public
+    GeneralInfoPublicListView, ResultsAcademicsPublicListView,
+    InfrastructurePublicListView, FeesPublicListView,
+    
     # SEO
     PageSEOPublicView,
     PageSEOAdminListCreateView, PageSEOAdminDetailView,
@@ -118,6 +122,12 @@ urlpatterns = [
     # Contact
     path('public/contact/', ContactPagePublicView.as_view(), name='public-contact'),
     path('public/contact/submit/', ContactSubmissionView.as_view(), name='public-contact-submit'),
+    
+    # Public Disclosure
+    path('public/general-info/', GeneralInfoPublicListView.as_view(), name='public-general-info'),
+    path('public/results-academics/', ResultsAcademicsPublicListView.as_view(), name='public-results-academics'),
+    path('public/infrastructure/', InfrastructurePublicListView.as_view(), name='public-infrastructure'),
+    path('public/fees/', FeesPublicListView.as_view(), name='public-fees'),
     
     
     # ==================== ADMIN URLS ====================

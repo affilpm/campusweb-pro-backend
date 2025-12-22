@@ -679,6 +679,32 @@ class ManagementMembersAdminDetailView(RetrieveUpdateDestroyAPIView):
 
 # ==================== PUBLIC DISCLOSURE VIEWS ====================
 
+class GeneralInfoPublicListView(ListAPIView):
+    """GET /api/public/general-info/"""
+    permission_classes = [AllowAny]
+    serializer_class = GeneralInfoPublicSerializer
+    queryset = GeneralInfo.objects.filter(is_active=True).order_by('order', 'id')
+
+class ResultsAcademicsPublicListView(ListAPIView):
+    """GET /api/public/results-academics/"""
+    permission_classes = [AllowAny]
+    serializer_class = ResultsAcademicsPublicSerializer
+    queryset = ResultsAcademics.objects.all().order_by('order', 'id')
+
+class InfrastructurePublicListView(ListAPIView):
+    """GET /api/public/infrastructure/"""
+    permission_classes = [AllowAny]
+    serializer_class = InfrastructurePublicSerializer
+    queryset = Infrastructure.objects.all().order_by('order', 'id')
+
+class FeesPublicListView(ListAPIView):
+    """GET /api/public/fees/"""
+    permission_classes = [AllowAny]
+    serializer_class = FeesPublicSerializer
+    queryset = Fees.objects.all().order_by('order', 'id')
+
+
+
 class GeneralInfoAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/general-info/"""
     permission_classes = [IsAuthenticated, IsAdminUser]
