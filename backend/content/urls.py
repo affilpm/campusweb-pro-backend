@@ -106,6 +106,7 @@ urlpatterns = [
     # Downloads
     path('public/downloads/', DownloadsPublicListView.as_view(), name='public-downloads'),
     path('public/declarations/', DeclarationsPublicListView.as_view(), name='public-declarations'),
+    path('public/documents/', DeclarationsPublicListView.as_view(), name='public-documents'), # Alias for frontend compatibility
     
     # Academics
     path('public/academics/', AcademicsPagePublicView.as_view(), name='public-academics'),
