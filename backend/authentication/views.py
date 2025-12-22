@@ -171,6 +171,7 @@ class TokenRefreshView(APIView):
                     response_data = {
                         'success': True,
                         'access': access_token,
+                        'refresh': str(new_refresh),  # Include new refresh token for localStorage
                     }
                     
                     response = Response(response_data, status=status.HTTP_200_OK)

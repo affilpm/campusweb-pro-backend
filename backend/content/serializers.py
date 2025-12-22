@@ -73,13 +73,13 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
 
 
 class HeroSectionPublicSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    background_image = serializers.SerializerMethodField()
 
     class Meta:
         model = HeroSection
-        exclude = ['created_at', 'updated_at']
+        fields = ['id', 'title', 'subtitle', 'background_image', 'cta_text', 'cta_link']
 
-    def get_image(self, obj):
+    def get_background_image(self, obj):
         if obj.image:
             request = self.context.get('request')
             if request:
