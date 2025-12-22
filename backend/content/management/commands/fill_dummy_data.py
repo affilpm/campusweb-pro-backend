@@ -164,7 +164,6 @@ class Command(BaseCommand):
             Notice.objects.create(
                 title="Parent-Teacher Meeting",
                 content="PTM for Classes I-V will be held on Saturday, Jan 10th.",
-                is_active=True,
                 publish_date=date.today()
             )
         self.stdout.write(self.style.SUCCESS('Notices filled.'))
@@ -173,17 +172,14 @@ class Command(BaseCommand):
         if not Event.objects.exists():
             Event.objects.create(
                 title="Annual Sports Day 2025",
-                description="Join us for a day of athleticism and team spirit.",
-                start_datetime=date.today() + timedelta(days=30), # Next month
-                end_datetime=date.today() + timedelta(days=30),
-                location="School Sports Ground"
+                content="Join us for a day of athleticism and team spirit.",
+                event_date=date.today() + timedelta(days=30),
+                is_featured=True
             )
             Event.objects.create(
                 title="Science Exhibition",
-                description="Students showcasing their innovative science projects.",
-                start_datetime=date.today() + timedelta(days=15),
-                end_datetime=date.today() + timedelta(days=15),
-                location="School Auditorium"
+                content="Students showcasing their innovative science projects.",
+                event_date=date.today() + timedelta(days=15)
             )
         self.stdout.write(self.style.SUCCESS('Events filled.'))
 
@@ -234,17 +230,14 @@ class Command(BaseCommand):
                 order=3
             )
         self.stdout.write(self.style.SUCCESS('Results & Academics filled.'))
-        
-        self.stdout.write(self.style.SUCCESS('Results & Academics filled.'))
 
         # 15. Admissions
         adm_settings, _ = AdmissionSettings.objects.get_or_create()
         adm_settings.hero_title = "Admissions Open 2025-26"
         adm_settings.hero_subtitle = "Join the Sunrise Family"
-        adm_settings.process_title = "Admission Process"
-        adm_settings.process_description = "Simple 4-step process to secure your child's future."
-        adm_settings.apply_title = "Apply Now"
-        adm_settings.apply_description = "Download the form or apply online."
+        adm_settings.overview_title = "Admission Process"
+        adm_settings.overview_content = "Simple 4-step process to secure your child's future."
+        # Note: apply_title/description do not exist in model, skipping.
         adm_settings.save()
         
         if not AdmissionStep.objects.exists():
@@ -257,29 +250,29 @@ class Command(BaseCommand):
         # 16. Facilities
         if not Facility.objects.exists():
             Facility.objects.create(
-                title="Smart Classrooms",
-                description="Equipped with digital boards and projectors.",
+                name="Smart Classrooms",
+                short_description="Equipped with digital boards and projectors.",
                 icon="computer",
-                image=ContentFile(b'dummy_image_data', name='classroom.jpg')
+                cover_image=ContentFile(b'dummy_image_data', name='classroom.jpg')
             )
             Facility.objects.create(
-                title="Sports Complex",
-                description="Football, Cricket, and Athletics tracks.",
+                name="Sports Complex",
+                short_description="Football, Cricket, and Athletics tracks.",
                 icon="trophy",
-                image=ContentFile(b'dummy_image_data', name='sports.jpg')
+                cover_image=ContentFile(b'dummy_image_data', name='sports.jpg')
             )
             Facility.objects.create(
-                title="Library",
-                description="Thousands of books for all ages.",
+                name="Library",
+                short_description="Thousands of books for all ages.",
                 icon="book",
-                image=ContentFile(b'dummy_image_data', name='library.jpg')
+                cover_image=ContentFile(b'dummy_image_data', name='library.jpg')
             )
         self.stdout.write(self.style.SUCCESS('Facilities filled.'))
 
         # 17. Gallery
         if not GalleryCategory.objects.exists():
-            cat1 = GalleryCategory.objects.create(name="Annual Function", description="Highlights from annual day")
-            cat2 = GalleryCategory.objects.create(name="Sports", description="Sports events")
+            cat1 = GalleryCategory.objects.create(name="Annual Function")
+            cat2 = GalleryCategory.objects.create(name="Sports")
             
             GalleryImage.objects.create(title="Dance Performance", category=cat1, image=ContentFile(b'dummy_image_data', name='dance.jpg'))
             GalleryImage.objects.create(title="Chief Guest Speech", category=cat1, image=ContentFile(b'dummy_image_data', name='speech.jpg'))
@@ -308,13 +301,13 @@ class Command(BaseCommand):
         if not Achievement.objects.exists():
             Achievement.objects.create(
                 title="Best School Award 2024",
-                date=date(2024, 11, 15),
+                year="2024",
                 description="Awarded by the State Education Board for excellence.",
                 image=ContentFile(b'dummy_image_data', name='award.jpg')
             )
             Achievement.objects.create(
                 title="National Science Olympiad Winner",
-                date=date(2024, 8, 20),
+                year="2024",
                 description="Our student Rohan Kumar secured 1st rank nationally.",
                 image=ContentFile(b'dummy_image_data', name='winner.jpg')
             )
