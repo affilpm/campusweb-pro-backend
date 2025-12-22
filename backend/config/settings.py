@@ -131,7 +131,7 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Cloudflare R2 Storage Configuration
-if os.getenv('USE_R2', 'False').lower() == 'true':
+if os.getenv('USE_R2', 'False').strip().lower() == 'true':
     AWS_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
