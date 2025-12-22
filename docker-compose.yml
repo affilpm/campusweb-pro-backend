@@ -19,7 +19,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   backend:
     build: 
       context: ./backend
@@ -34,20 +33,20 @@ services:
       resources:
         limits:
           memory: 400M
-
   nginx:
     image: nginx:alpine
     restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
     deploy:
       resources:
         limits:
           memory: 50M
-
 volumes:
   postgres_data:
