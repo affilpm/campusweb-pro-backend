@@ -64,13 +64,14 @@ class AdminLoginView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         
-        # Prepare response
+        # Prepare response - include refresh token in body for cross-origin compatibility
         user_serializer = AdminUserSerializer(user)
         response_data = {
             'success': True,
             'message': 'Login successful',
             'user': user_serializer.data,
             'access': access_token,
+            'refresh': str(refresh),  # Include refresh token in body for localStorage storage
         }
         
         response = Response(response_data, status=status.HTTP_200_OK)
@@ -138,14 +139,14 @@ class TokenRefreshView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
-        # Get refresh token from cookie
-        refresh_token = get_refresh_token_from_cookie(request)
+        # Try to get refresh token from request body first (for cross-origin), then fall back to cookie
+        refresh_token = request.data.get('refresh') or get_refresh_token_from_cookie(request)
         
         if not refresh_token:
             return Response(
                 {
                     'success': False,
-                    'message': 'Refresh token not found',
+                    'message': 'Refresh token not found. Send as {"refresh": "token"} in body or via cookie.',
                 },
                 status=status.HTTP_401_UNAUTHORIZED
             )
