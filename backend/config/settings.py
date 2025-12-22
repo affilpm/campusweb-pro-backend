@@ -223,6 +223,16 @@ CORS_ALLOW_HEADERS = [
 # Cookie Settings for Refresh Token
 REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
 REFRESH_TOKEN_COOKIE_HTTPONLY = True
-REFRESH_TOKEN_COOKIE_SECURE = False  # Changed to False to allow HTTP login
-REFRESH_TOKEN_COOKIE_SAMESITE = 'Lax'
+REFRESH_TOKEN_COOKIE_SECURE = not DEBUG  # True in production (HTTPS)
+REFRESH_TOKEN_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax' # 'None' allows cross-site (Frontend -> Backend)
 REFRESH_TOKEN_COOKIE_PATH = '/'
+
+# CSRF Settings (Required for HTTPS Admin/Login)
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://api.affils.site',
+    'https://affils.site',
+    # Add your Vercel URL here if needed, e.g. 'https://school-frontend.vercel.app'
+]
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
