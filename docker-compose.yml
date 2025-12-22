@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:16-alpine
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -23,6 +24,7 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     environment:
       - DEBUG=False
       - POSTGRES_HOST=db
@@ -43,6 +45,7 @@ services:
 
   nginx:
     image: nginx:alpine
+    restart: always
     ports:
       - "80:80"
     volumes:

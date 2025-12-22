@@ -7,11 +7,11 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from project root
+load_dotenv(BASE_DIR.parent / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this')
@@ -142,6 +142,7 @@ if os.getenv('USE_R2', 'False').lower() == 'true':
     # Storage Backends
     STATICFILES_STORAGE = 'config.storages.StaticStorage'
     DEFAULT_FILE_STORAGE = 'config.storages.MediaStorage'
+    AWS_QUERYSTRING_AUTH = False
     
     if AWS_S3_CUSTOM_DOMAIN:
         STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
