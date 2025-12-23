@@ -20,6 +20,7 @@ services:
       timeout: 5s
       retries: 5
   backend:
+    image: affil/school-backend:latest
     build: 
       context: ./backend
       dockerfile: Dockerfile
