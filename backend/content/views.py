@@ -345,7 +345,7 @@ class GalleryPublicView(APIView):
     def get(self, request):
         context = {'request': request}
         categories = list(GalleryCategoryPublicSerializer(GalleryCategory.objects.all(), many=True).data)
-        gallery_qs = GalleryImage.objects.all()
+        gallery_qs = GalleryImage.objects.select_related('category').all()
         category_slug = request.query_params.get('category')
         if category_slug and category_slug != 'all':
             gallery_qs = gallery_qs.filter(category__slug=category_slug)
@@ -374,7 +374,7 @@ class GalleryImagesAdminListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     serializer_class = GalleryImageAdminSerializer
-    queryset = GalleryImage.objects.all()
+    queryset = GalleryImage.objects.select_related('category').all()
 
 class GalleryImagesAdminDetailView(RetrieveUpdateDestroyAPIView):
     """GET/PUT/DELETE /api/admin/content/gallery/images/<id>/"""
@@ -404,7 +404,7 @@ class FacilitiesAdminListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     serializer_class = FacilityAdminSerializer
-    queryset = Facility.objects.all()
+    queryset = Facility.objects.prefetch_related('gallery_images').all()
 
 class FacilitiesAdminDetailView(RetrieveUpdateDestroyAPIView):
     """GET/PUT/DELETE /api/admin/content/facilities/<id>/"""
@@ -420,7 +420,7 @@ class FacilityImagesAdminListCreateView(ListCreateAPIView):
     serializer_class = FacilityImageAdminSerializer
 
     def get_queryset(self):
-        return FacilityImage.objects.filter(facility_id=self.kwargs['facility_id'])
+        return FacilityImage.objects.select_related('facility').filter(facility_id=self.kwargs['facility_id'])
 
     def perform_create(self, serializer):
         serializer.save(facility_id=self.kwargs['facility_id'])
