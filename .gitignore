@@ -37,3 +37,7 @@ staticfiles/
 # Vercel
 .vercel
 frontend scho/
+
+# Agent artifacts
+.agent/
+.gemini/
