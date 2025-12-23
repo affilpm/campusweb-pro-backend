@@ -22,6 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Run gunicorn
-# 2 workers are sufficient for 1GB RAM
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "120", "--forwarded-allow-ips", "*"]
+# Make entrypoint executable
+RUN chmod +x entrypoint.sh
+
+# Expose port
+EXPOSE 8000
+
+# Run entrypoint (migrations + gunicorn)
+ENTRYPOINT ["./entrypoint.sh"]
