@@ -25,7 +25,12 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SiteSettings
-        fields = '__all__'
+        fields = [
+            'id', 'school_name', 'school_motto', 'school_logo', 'favicon',
+            'address', 'phone', 'email',  # Use mapped field names
+            'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
+            'footer_text'
+        ]
 
 
 class SiteSettingsPublicSerializer(serializers.ModelSerializer):
