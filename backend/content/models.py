@@ -268,7 +268,7 @@ class Facility(TenantAwareModel):
     long_description = models.TextField(blank=True, default="", help_text="Detailed description")
     icon = models.CharField(max_length=50, default="🏫", help_text="Emoji icon")
     cover_image = models.ImageField(upload_to=facilities_upload_path, blank=True, null=True)
-    order = models.PositiveIntegerField(default=1)
+    order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
     class Meta:
