@@ -10,8 +10,8 @@ from .views import (
     
     # Schools / Site Settings
     SiteSettingsAdminView, HeroSectionAdminView,
-    VisionMissionAdminView, HomeAboutSectionAdminView,
-    PrincipalMessageAdminView, QuickLinksAdminListCreateView, QuickLinksAdminDetailView,
+    VisionMissionAdminView, VisionMissionResetView, HomeAboutSectionAdminView,
+    PrincipalMessageAdminView, PrincipalMessageResetView, QuickLinksAdminListCreateView, QuickLinksAdminDetailView,
     
     # Notices
     NoticesPublicListView, NoticesPublicDetailView,
@@ -56,7 +56,7 @@ from .views import (
     
     # About
     AboutPagePublicView,
-    AboutPageAdminView,
+    AboutPageAdminView, AboutPageResetView,
     TimelineEventsAdminListCreateView, TimelineEventsAdminDetailView,
     ManagementMembersAdminListCreateView, ManagementMembersAdminDetailView,
     
@@ -139,7 +139,9 @@ urlpatterns = [
     path('admin/content/hero/', HeroSectionAdminView.as_view(), name='admin-hero'),
     path('admin/content/home-about/', HomeAboutSectionAdminView.as_view(), name='admin-home-about'),
     path('admin/content/principal/', PrincipalMessageAdminView.as_view(), name='admin-principal'),
+    path('admin/content/principal/reset/', PrincipalMessageResetView.as_view(), name='admin-principal-reset'),
     path('admin/content/vision-mission/', VisionMissionAdminView.as_view(), name='admin-vision-mission'),
+    path('admin/content/vision-mission/reset/', VisionMissionResetView.as_view(), name='admin-vision-mission-reset'),
     path('admin/content/quick-links/', QuickLinksAdminListCreateView.as_view(), name='admin-quick-links'),
     path('admin/content/quick-links/<int:pk>/', QuickLinksAdminDetailView.as_view(), name='admin-quick-link-detail'),
     
@@ -193,6 +195,7 @@ urlpatterns = [
     
     # About
     path('admin/content/about/page/', AboutPageAdminView.as_view(), name='admin-about-page'),
+    path('admin/content/about/page/reset/', AboutPageResetView.as_view(), name='admin-about-reset'),
     path('admin/content/about/timeline/', TimelineEventsAdminListCreateView.as_view(), name='admin-timeline'),
     path('admin/content/about/timeline/<int:pk>/', TimelineEventsAdminDetailView.as_view(), name='admin-timeline-detail'),
     path('admin/content/about/management/', ManagementMembersAdminListCreateView.as_view(), name='admin-management'),

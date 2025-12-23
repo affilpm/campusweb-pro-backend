@@ -167,6 +167,38 @@ class VisionMissionAdminView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class VisionMissionResetView(APIView):
+    """POST /api/admin/content/vision-mission/reset/ - Reset specific sections"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    
+    def post(self, request):
+        section = request.data.get('section')
+        if not section:
+            return Response({'error': 'Section parameter required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        vm = VisionMission.load()
+        
+        section_fields = {
+            'vision': {'vision_title': '', 'vision_content': ''},
+            'mission': {'mission_title': '', 'mission_content': ''},
+            'values': {'values_title': '', 'values_content': ''},
+        }
+        
+        if section not in section_fields:
+            return Response({'error': f'Invalid section: {section}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        for field, value in section_fields[section].items():
+            setattr(vm, field, value)
+        
+        vm.save()
+        
+        serializer = VisionMissionAdminSerializer(vm, context={'request': request})
+        return Response({
+            'message': f'{section.title()} section reset successfully',
+            'data': serializer.data
+        })
+
 class HomeAboutSectionAdminView(APIView):
     """GET/PUT /api/admin/content/home-about/"""
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -202,6 +234,28 @@ class PrincipalMessageAdminView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PrincipalMessageResetView(APIView):
+    """POST /api/admin/content/principal/reset/ - Reset principal section"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    
+    def post(self, request):
+        principal = PrincipalMessage.load()
+        
+        # Reset all fields
+        principal.name = ''
+        principal.title = ''
+        principal.qualification = ''
+        principal.message = ''
+        principal.photo = None
+        principal.save()
+        
+        serializer = PrincipalMessageAdminSerializer(principal, context={'request': request})
+        return Response({
+            'message': 'Principal section reset successfully',
+            'data': serializer.data
+        })
 
 class QuickLinksAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/quick-links/"""
@@ -647,6 +701,50 @@ class AboutPageAdminView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AboutPageResetView(APIView):
+    """POST /api/admin/content/about/page/reset/ - Reset specific sections"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    
+    def post(self, request):
+        section = request.data.get('section')
+        if not section:
+            return Response({'error': 'Section parameter required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        about = AboutPage.load()
+        
+        # Define which fields to reset for each section
+        section_fields = {
+            'history': {
+                'history_title': '',
+                'history_content': '',
+                'history_image': None,
+            },
+            'infrastructure': {
+                'infrastructure_title': '',
+                'infrastructure_content': '',
+            },
+            'hero': {
+                'hero_title': '',
+                'hero_subtitle': '',
+            },
+        }
+        
+        if section not in section_fields:
+            return Response({'error': f'Invalid section: {section}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Reset the fields
+        for field, value in section_fields[section].items():
+            setattr(about, field, value)
+        
+        about.save()
+        
+        serializer = AboutPageAdminSerializer(about, context={'request': request})
+        return Response({
+            'message': f'{section.title()} section reset successfully',
+            'data': serializer.data
+        })
 
 class TimelineEventsAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/about/timeline/"""
