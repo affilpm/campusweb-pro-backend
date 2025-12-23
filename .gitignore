@@ -41,3 +41,4 @@ frontend scho/
 # Agent artifacts
 .agent/
 .gemini/
+# test ignore
