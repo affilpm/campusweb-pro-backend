@@ -342,6 +342,17 @@ REFRESH_TOKEN_LIFETIME_DAYS=7
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
+### ⚠️ Note on Frontend Repository
+The `frontend-scho/` directory is a **Nested Git Repository**.
+To push changes for the frontend, you must navigate into the folder first:
+```bash
+cd frontend-scho
+git add .
+git commit -m "Update frontend"
+git push
+```
+The root repository only tracks the Backend and DevOps configuration.
+
 ## 🏭 Production Checklist
 
 - [ ] Change `SECRET_KEY` to a secure random value
