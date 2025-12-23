@@ -353,7 +353,44 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 - [ ] Add rate limiting
 - [ ] Configure production CORS origins
 
+## 🚢 Deployment (CI/CD)
+
+The project uses a **Hybrid Deployment Strategy** automation via **GitHub Actions** and **Docker Hub**.
+
+### Architecture
+- **Infrastructure:** Managed via `docker-compose.yml` (Git).
+- **Application Code:** Managed via Docker Images (`affil/school-backend:latest`).
+
+### Automated Workflow
+1.  **Push to `main`**: Triggers `.github/workflows/deploy.yml`.
+2.  **Build**: GitHub builds the Docker image and pushes it to [Docker Hub](https://hub.docker.com/r/affil/school-backend).
+3.  **Deploy**: GitHub connects to your DigitalOcean droplet via SSH and runs:
+    ```bash
+    git pull origin main       # Updates config (docker-compose.yml)
+    docker compose pull backend # Downloads new app code
+    docker compose up -d       # Restarts containers
+    ```
+
+### Server Setup (One-Time)
+1.  **SSH Keys**: Ensure `~/.ssh/authorized_keys` on the server contains the GitHub Action's public key.
+2.  **Environment**: Create `~/school/.env` manually on the server with production secrets.
+3.  **Secrets**: Configure the following Repository Secrets in GitHub:
+    - `DOCKER_USERNAME` / `DOCKER_PASSWORD`
+    - `SSH_HOST` / `SSH_USER` / `SSH_KEY`
+
+### Manual Deployment (Fallback)
+If CI/CD fails, you can deploy manually from your machine:
+```bash
+# 1. Build and Push
+cd backend
+docker build --platform linux/amd64 -t affil/school-backend:latest .
+docker push affil/school-backend:latest
+
+# 2. Update Server
+ssh root@api.affils.site "cd ~/school && docker compose pull && docker compose up -d"
+```
+
 ## 📄 License
 
 MIT License
-# school
+
