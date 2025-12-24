@@ -254,6 +254,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://affils.site',
     'https://www.affils.site',
     'https://school-frontend-sandy-nine.vercel.app',  # Vercel Frontend
+    'https://novelschoolindia.com',
+    'https://www.novelschoolindia.com',
 ]
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
