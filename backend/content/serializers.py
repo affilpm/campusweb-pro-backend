@@ -29,6 +29,7 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
             'id', 'school_name', 'school_motto', 'school_logo', 'favicon',
             'address', 'phone', 'email',  # Use mapped field names
             'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
+            'google_maps_link',
             'footer_text'
         ]
 
@@ -49,6 +50,7 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
             'id', 'school_name', 'school_motto', 'school_logo', 'favicon',
             'address', 'phone', 'email',
             'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
+            'google_maps_link',
             'footer_text'
         ]
 
@@ -831,11 +833,30 @@ class PageSEOAdminSerializer(serializers.ModelSerializer):
 class ContactPagePublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactPage
+    address = serializers.SerializerMethodField()
+    phone = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ContactPage
         fields = [
             'hero_title', 'hero_subtitle',
             'address', 'phone', 'email',
-            'map_embed_code', 'office_hours'
+            'map_embed_code', 'office_hours', 'school_hours'
         ]
+
+    def get_address(self, obj):
+        # Source from SiteSettings if available, else fallback to model
+        settings = SiteSettings.load()
+        return settings.school_address or obj.address
+
+    def get_phone(self, obj):
+        settings = SiteSettings.load()
+        return settings.school_phone or obj.phone
+
+    def get_email(self, obj):
+        settings = SiteSettings.load()
+        return settings.school_email or obj.email
 
 
 class ContactSubmissionSerializer(serializers.ModelSerializer):

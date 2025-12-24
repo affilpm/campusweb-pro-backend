@@ -43,6 +43,7 @@ class SiteSettings(SingletonTenantModel):
     twitter_url = models.URLField(blank=True, default="")
     youtube_url = models.URLField(blank=True, default="")
     linkedin_url = models.URLField(blank=True, default="")
+    google_maps_link = models.URLField(blank=True, default="", help_text="Link to Google Maps location")
 
     class Meta:
         verbose_name = "Site Settings"
@@ -682,6 +683,7 @@ class ContactPage(SingletonTenantModel):
     email = models.EmailField(blank=True)
     map_embed_code = models.TextField(blank=True, help_text="Google Maps embed iframe code")
     office_hours = models.TextField(blank=True)
+    school_hours = models.TextField(blank=True)
 
     class Meta:
         verbose_name = "Contact Page"
