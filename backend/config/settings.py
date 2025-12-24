@@ -260,3 +260,33 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+
+# Logging Configuration
+# Explicitly configured to log to Console (stdout).
+# Docker/Droplet will capture this. To prevent storage drain,
+# ensure Docker Log Rotation is configured on the server.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',  # Only log Warnings/Errors by default to save space
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',  # Log Django info (like startup/requests)
+            'propagate': False,
+        },
+        'content': {  # Your app
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
