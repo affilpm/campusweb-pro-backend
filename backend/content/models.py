@@ -30,7 +30,7 @@ class SiteSettings(SingletonTenantModel):
     school_name = models.CharField(max_length=255, default="My School")
     school_address = models.TextField(blank=True, default="")
     school_email = models.EmailField(blank=True, default="")
-    school_phone = models.CharField(max_length=50, blank=True, default="")
+    school_phone = models.TextField(blank=True, default="", help_text="Enter multiple phone numbers separated by commas or newlines")
     school_logo = models.ImageField(upload_to=logos_upload_path, blank=True, null=True)
     favicon = models.ImageField(upload_to=logos_upload_path, blank=True, null=True)
     
