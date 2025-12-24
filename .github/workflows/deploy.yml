@@ -48,3 +48,4 @@ jobs:
             git pull origin main
             docker compose pull backend
             docker compose up -d
+            docker image prune -f
