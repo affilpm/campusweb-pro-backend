@@ -43,6 +43,8 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='school_email', read_only=True)
     school_motto = serializers.SerializerMethodField()
     footer_text = serializers.SerializerMethodField()
+    school_hours = serializers.SerializerMethodField()
+    office_hours = serializers.SerializerMethodField()
 
     class Meta:
         model = SiteSettings
@@ -51,7 +53,8 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
             'address', 'phone', 'email',
             'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
             'google_maps_link',
-            'footer_text'
+            'footer_text',
+            'school_hours', 'office_hours'
         ]
 
     def get_school_logo(self, obj):
@@ -77,6 +80,20 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
     def get_footer_text(self, obj):
         # Return empty string (frontend has fallback)
         return ""
+
+    def get_school_hours(self, obj):
+        try:
+            contact_page = ContactPage.load()
+            return contact_page.school_hours
+        except:
+            return ""
+
+    def get_office_hours(self, obj):
+        try:
+            contact_page = ContactPage.load()
+            return contact_page.office_hours
+        except:
+            return ""
 
 
 class HeroSectionPublicSerializer(serializers.ModelSerializer):
