@@ -160,6 +160,9 @@ docker compose exec backend python manage.py createsuperuser
 
 # 4. Fill Dummy Data (Optional, for fresh sites)
 docker compose exec backend python manage.py fill_dummy_data
+
+# 5. Populate SEO Data (Recommended)
+docker compose exec backend python populate_seo.py
 ```
 
 ---

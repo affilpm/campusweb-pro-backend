@@ -72,11 +72,11 @@ def populate_seo():
     ]
 
     for page_data in pages:
-        obj, created = PageSEO.objects.update_or_create(
+        obj, created = PageSEO.objects.get_or_create(
             page_slug=page_data['page_slug'],
             defaults=page_data
         )
-        status = "Created" if created else "Updated"
+        status = "Created" if created else "Skipped (Exists)"
         print(f"{status}: {page_data['page_slug']}")
 
 if __name__ == '__main__':
