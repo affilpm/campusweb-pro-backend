@@ -36,7 +36,7 @@ staticfiles/
 
 # Vercel
 .vercel
-frontend-scho/
+frontend-school/
 
 # Agent artifacts
 .agent/
