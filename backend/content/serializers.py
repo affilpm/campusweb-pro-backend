@@ -7,7 +7,7 @@ from rest_framework import serializers
 from .models import (
     SiteSettings, HeroSection, VisionMission, HomeAboutSection, PrincipalMessage, QuickLink,
     Notice, Event, GalleryCategory, GalleryImage, Facility, FacilityImage,
-    Achievement, Testimonial, Download, Documentation,
+    Achievement, Testimonial, Documentation,
     AcademicHighlight, ClassCategory, Subject, AcademicsPage,
     AdmissionSettings, AdmissionStep,
     AboutPage, TimelineEvent, ManagementMember,
@@ -480,20 +480,7 @@ class TestimonialAdminSerializer(serializers.ModelSerializer):
 
 # --- Downloads ---
 
-class DownloadPublicSerializer(serializers.ModelSerializer):
-    file = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Download
-        fields = ['id', 'title', 'description', 'category', 'file', 'download_count', 'created_at']
-
-    def get_file(self, obj):
-        if obj.file:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.file.url)
-            return obj.file.url
-        return None
 
 
 class DocumentationPublicSerializer(serializers.ModelSerializer):
@@ -512,11 +499,7 @@ class DocumentationPublicSerializer(serializers.ModelSerializer):
         return None
 
 
-class DownloadAdminSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Download
-        fields = '__all__'
-        read_only_fields = ['download_count', 'created_at']
+
 
 
 class DocumentationAdminSerializer(serializers.ModelSerializer):

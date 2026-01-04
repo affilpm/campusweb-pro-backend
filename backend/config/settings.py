@@ -76,13 +76,22 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # Using PostgreSQL
+# Intelligent Host Resolution: Fallback to localhost if 'db' (Docker) is unreachable
+postgres_host = os.getenv('POSTGRES_HOST', '127.0.0.1')
+if postgres_host == 'db':
+    try:
+        import socket
+        socket.gethostbyname('db')
+    except (socket.gaierror, ImportError):
+        postgres_host = '127.0.0.1'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'school_db'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
+        'HOST': postgres_host,
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
@@ -191,9 +200,9 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',      # Limit for unauthenticated users
-        'user': '10000/day',    # Limit for authenticated users (adjust as needed)
-        'burst': '60/min',      # Optional custom scope for burst protection
+        'anon': '5000/day',     # Reduced strictness for public visitors (was 100/day)
+        'user': '20000/day',    # Generous limit for admins
+        'burst': '100/min',     # Protection against DOS bursts
     },
 }
 

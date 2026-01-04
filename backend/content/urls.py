@@ -37,9 +37,8 @@ from .views import (
     # Testimonials
     TestimonialsAdminListCreateView, TestimonialsAdminDetailView,
     
-    # Downloads
-    DownloadsPublicListView, DeclarationsPublicListView,
-    DownloadsAdminListCreateView, DownloadsAdminDetailView,
+    # Downloads & Documentation
+    DocumentsPublicListView,
     DocumentationAdminListCreateView, DocumentationAdminDetailView,
     
     # Academics
@@ -104,9 +103,9 @@ urlpatterns = [
     path('public/facilities/<slug:slug>/', FacilityPublicDetailView.as_view(), name='public-facilities-detail'),
     
     # Downloads
-    path('public/downloads/', DownloadsPublicListView.as_view(), name='public-downloads'),
-    path('public/declarations/', DeclarationsPublicListView.as_view(), name='public-declarations'),
-    path('public/documents/', DeclarationsPublicListView.as_view(), name='public-documents'), # Alias for frontend compatibility
+
+
+
     
     # Academics
     path('public/academics/', AcademicsPagePublicView.as_view(), name='public-academics'),
@@ -125,6 +124,7 @@ urlpatterns = [
     path('public/contact/submit/', ContactSubmissionView.as_view(), name='public-contact-submit'),
     
     # Public Disclosure
+    path('public/documents/', DocumentsPublicListView.as_view(), name='public-documents'), # Moved from Downloads, part of disclosures
     path('public/general-info/', GeneralInfoPublicListView.as_view(), name='public-general-info'),
     path('public/results-academics/', ResultsAcademicsPublicListView.as_view(), name='public-results-academics'),
     path('public/infrastructure/', InfrastructurePublicListView.as_view(), name='public-infrastructure'),
@@ -173,9 +173,7 @@ urlpatterns = [
     path('admin/content/testimonials/', TestimonialsAdminListCreateView.as_view(), name='admin-testimonials-list'),
     path('admin/content/testimonials/<int:pk>/', TestimonialsAdminDetailView.as_view(), name='admin-testimonials-detail'),
     
-    # Downloads
-    path('admin/content/downloads/', DownloadsAdminListCreateView.as_view(), name='admin-downloads-list'),
-    path('admin/content/downloads/<int:pk>/', DownloadsAdminDetailView.as_view(), name='admin-downloads-detail'),
+
     path('admin/content/documentation/', DocumentationAdminListCreateView.as_view(), name='admin-documentation-list'),
     path('admin/content/documentation/<int:pk>/', DocumentationAdminDetailView.as_view(), name='admin-documentation-detail'),
     

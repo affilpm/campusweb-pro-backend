@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Create cache table (fail silently if exists)
+python manage.py createcachetable || true
+
 # Run migrations
 python manage.py migrate --noinput
 

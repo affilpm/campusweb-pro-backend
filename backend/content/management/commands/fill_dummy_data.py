@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.core.files.base import ContentFile
 from content.models import (
     SiteSettings, HeroSection, PrincipalMessage, HomeAboutSection,
-    VisionMission, AboutPage, AcademicsPage, Download, Notice, Event,
+    VisionMission, AboutPage, AcademicsPage, Notice, Event,
     GalleryCategory, GalleryImage, Facility, Testimonial, Achievement,
     GeneralInfo, Infrastructure, Fees, ResultsAcademics,
     AdmissionSettings, AdmissionStep, ManagementMember, TimelineEvent, QuickLink
@@ -131,27 +131,7 @@ class Command(BaseCommand):
         academics.save()
         self.stdout.write(self.style.SUCCESS('Academics Page filled.'))
 
-        # 8. Downloads
-        if not Download.objects.exists():
-            Download.objects.create(
-                title="Admission Form 2025",
-                category=Download.Category.FORM,
-                description="Application form for new admissions.",
-                file=ContentFile(b'dummy_pdf_data', name='admission_form.pdf')
-            )
-            Download.objects.create(
-                title="School Prospectus",
-                category=Download.Category.PROSPECTUS,
-                description="Information about school policies and facilities.",
-                file=ContentFile(b'dummy_pdf_data', name='prospectus.pdf')
-            )
-            Download.objects.create(
-                title="Annual Exam Schedule",
-                category=Download.Category.CIRCULAR,
-                description="Datesheet for final exams.",
-                file=ContentFile(b'dummy_pdf_data', name='exam_schedule.pdf')
-            )
-        self.stdout.write(self.style.SUCCESS('Downloads filled.'))
+
 
         # 9. Notices
         if not Notice.objects.exists():

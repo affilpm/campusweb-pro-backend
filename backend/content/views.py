@@ -15,7 +15,7 @@ from authentication.permissions import IsAdminUser
 from .models import (
     SiteSettings, HeroSection, VisionMission, HomeAboutSection, PrincipalMessage, QuickLink,
     Notice, Event, GalleryCategory, GalleryImage, Facility, FacilityImage,
-    Achievement, Testimonial, Download, Documentation,
+    Achievement, Testimonial, Documentation,
     AcademicHighlight, ClassCategory, Subject, AcademicsPage,
     AdmissionSettings, AdmissionStep,
     AboutPage, TimelineEvent, ManagementMember,
@@ -34,7 +34,7 @@ from .serializers import (
     FacilityPublicSerializer, FacilityDetailSerializer, FacilityAdminSerializer, FacilityImageAdminSerializer,
     AchievementPublicSerializer, AchievementAdminSerializer,
     TestimonialPublicSerializer, TestimonialAdminSerializer,
-    DownloadPublicSerializer, DocumentationPublicSerializer, DownloadAdminSerializer, DocumentationAdminSerializer,
+    DocumentationPublicSerializer, DocumentationAdminSerializer,
     
     AcademicHighlightPublicSerializer, SubjectPublicSerializer, ClassCategoryPublicSerializer, AcademicsPagePublicSerializer,
     AcademicHighlightAdminSerializer, SubjectAdminSerializer, ClassCategoryAdminSerializer, AcademicsPageAdminSerializer,
@@ -467,40 +467,14 @@ class TestimonialsAdminDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Testimonial.objects.all()
 
 
-# ==================== DOWNLOADS VIEWS ====================
 
-class DownloadsPublicListView(ListAPIView):
-    """GET /api/public/downloads/"""
-    permission_classes = [AllowAny]
-    serializer_class = DownloadPublicSerializer
-    
-    def get_queryset(self):
-        qs = Download.objects.filter(is_active=True)
-        category = self.request.query_params.get('category')
-        if category:
-            qs = qs.filter(category=category)
-        return qs
 
-class DeclarationsPublicListView(ListAPIView):
-    """GET /api/public/declarations/ (Documentation)"""
+
+class DocumentsPublicListView(ListAPIView):
+    """GET /api/public/documents/ (Documentation)"""
     permission_classes = [AllowAny]
     serializer_class = DocumentationPublicSerializer
     queryset = Documentation.objects.filter(is_active=True).order_by('order', 'id')
-
-# Admin
-class DownloadsAdminListCreateView(ListCreateAPIView):
-    """GET/POST /api/admin/content/downloads/"""
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-    serializer_class = DownloadAdminSerializer
-    queryset = Download.objects.all()
-
-class DownloadsAdminDetailView(RetrieveUpdateDestroyAPIView):
-    """GET/PUT/DELETE /api/admin/content/downloads/<id>/"""
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-    serializer_class = DownloadAdminSerializer
-    queryset = Download.objects.all()
 
 class DocumentationAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/documentation/"""

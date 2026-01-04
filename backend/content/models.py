@@ -14,7 +14,7 @@ from core.utils import (
     gallery_upload_path,
     facilities_upload_path, facilities_gallery_upload_path,
     achievements_upload_path, testimonials_upload_path,
-    downloads_upload_path, documentation_upload_path,
+    documentation_upload_path,
     academics_upload_path, admissions_upload_path,
     about_timeline_upload_path, about_management_upload_path,
     results_upload_path, seo_upload_path
@@ -360,32 +360,7 @@ class Testimonial(TenantAwareModel):
 
 # --- Downloads ---
 
-class Download(TenantAwareModel):
-    """Downloadable files/documents."""
-    class Category(models.TextChoices):
-        CIRCULAR = 'circular', 'Circular'
-        PROSPECTUS = 'prospectus', 'Prospectus'
-        CALENDAR = 'calendar', 'Academic Calendar'
-        RESULT = 'result', 'Results'
-        FORM = 'form', 'Forms'
-        SYLLABUS = 'syllabus', 'Syllabus'
-        TIMETABLE = 'timetable', 'Timetable'
-        OTHER = 'other', 'Other'
 
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    file = models.FileField(upload_to=downloads_upload_path)
-    category = models.CharField(max_length=20, choices=Category.choices, default=Category.OTHER)
-    is_active = models.BooleanField(default=True)
-    download_count = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        ordering = ['-created_at']
-        verbose_name = "Download"
-        verbose_name_plural = "Downloads"
-
-    def __str__(self):
-        return self.title
 
 
 class Documentation(TenantAwareModel):
