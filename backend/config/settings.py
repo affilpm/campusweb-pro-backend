@@ -259,9 +259,9 @@ REFRESH_TOKEN_COOKIE_PATH = '/'
 # CSRF Settings (Required for HTTPS Admin/Login)
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
-    'https://api.affils.site',
-    'https://affils.site',
-    'https://www.affils.site',
+    'https://api.novelschoolindia.com',
+    'https://novelschoolindia.com',
+    'https://www.novelschoolindia.com',
     'https://school-frontend-sandy-nine.vercel.app',  # Vercel Frontend
     'https://novelschoolindia.com',
     'https://www.novelschoolindia.com',
