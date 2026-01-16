@@ -30,3 +30,4 @@ EXPOSE 8000
 
 # Run entrypoint (migrations + gunicorn)
 ENTRYPOINT ["./entrypoint.sh"]
+# CI/CD test
