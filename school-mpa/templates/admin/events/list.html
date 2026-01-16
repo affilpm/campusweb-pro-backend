@@ -1,0 +1,57 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block page_title %}Events{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-bold text-gray-900">All Events</h2>
+    <a href="{% url 'admin-event-create' %}" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        Add Event
+    </a>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {% for event in events %}
+        <div class="bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-all">
+            {% if event.image %}
+            <div class="h-40 overflow-hidden">
+                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+            <div class="p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    {% if event.is_featured %}
+                    <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">Featured</span>
+                    {% endif %}
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {% if event.status == 'published' %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-700{% endif %}">
+                        {{ event.status|title }}
+                    </span>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">{{ event.title|truncatechars:40 }}</h3>
+                {% if event.event_date %}
+                <p class="text-sm text-gray-500 mb-3">{{ event.event_date|date:"M j, Y" }}</p>
+                {% endif %}
+                <div class="flex gap-2">
+                    <a href="{% url 'admin-event-edit' event.pk %}" class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 transition-colors">Edit</a>
+                    <a href="{% url 'admin-event-delete' event.pk %}" class="px-3 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12 text-gray-400">No events yet. Create your first event!</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if events.has_other_pages %}
+<div class="flex justify-center mt-6">
+    <nav class="flex gap-2">
+        {% if events.has_previous %}<a href="?page={{ events.previous_page_number }}" class="px-4 py-2 bg-white border rounded-lg hover:bg-gray-50">Previous</a>{% endif %}
+        <span class="px-4 py-2 bg-green-600 text-white rounded-lg">{{ events.number }}</span>
+        {% if events.has_next %}<a href="?page={{ events.next_page_number }}" class="px-4 py-2 bg-white border rounded-lg hover:bg-gray-50">Next</a>{% endif %}
+    </nav>
+</div>
+{% endif %}
+{% endblock %}

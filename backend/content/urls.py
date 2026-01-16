@@ -124,8 +124,8 @@ urlpatterns = [
     path('public/contact/submit/', ContactSubmissionView.as_view(), name='public-contact-submit'),
     
     # Public Disclosure
-    path('public/documents/', DocumentsPublicListView.as_view(), name='public-documents'), # Moved from Downloads, part of disclosures
     path('public/general-info/', GeneralInfoPublicListView.as_view(), name='public-general-info'),
+    path('public/documents/', DocumentsPublicListView.as_view(), name='public-documents'), # Moved from Downloads, part of disclosures
     path('public/results-academics/', ResultsAcademicsPublicListView.as_view(), name='public-results-academics'),
     path('public/infrastructure/', InfrastructurePublicListView.as_view(), name='public-infrastructure'),
     path('public/fees/', FeesPublicListView.as_view(), name='public-fees'),
