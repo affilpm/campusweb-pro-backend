@@ -111,6 +111,31 @@ class HomepagePublicView(APIView):
         return Response(data)
 
 
+class LayoutPublicView(APIView):
+    """
+    GET /api/public/layout/
+    Returns only data needed for Global Layout (Header/Footer):
+    - Site Settings (Logo, Name, Contact info)
+    - Quick Links (Footer links)
+    
+    Lighter alternative to HomepagePublicView for inner pages.
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        context = {'request': request}
+        
+        site_settings = SiteSettings.load()
+        quick_links = QuickLink.objects.filter(is_active=True)
+        
+        data = {
+            'site_settings': SiteSettingsPublicSerializer(site_settings, context=context).data,
+            'quick_links': QuickLinkPublicSerializer(quick_links, many=True, context=context).data,
+        }
+        
+        return Response(data)
+
+
 # ==================== SCHOOLS / SITE SETTINGS VIEWS ====================
 
 # Admin
@@ -273,7 +298,11 @@ class QuickLinksAdminDetailView(RetrieveUpdateDestroyAPIView):
 # ==================== NOTICES VIEWS ====================
 
 class NoticesPublicListView(ListAPIView):
-    """GET /api/public/notices/"""
+    """GET /api/public/notices/
+    
+    Supports pagination via ?page=1 query param (20 items per page).
+    Returns notices ordered by publish_date (newest first).
+    """
     permission_classes = [AllowAny]
     serializer_class = NoticePublicSerializer
     
@@ -283,7 +312,28 @@ class NoticesPublicListView(ListAPIView):
             publish_date__lte=timezone.now().date()
         ).exclude(
             expiry_date__lt=timezone.now().date()
-        )
+        ).order_by('-publish_date', '-id')
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        # Pagination: limit to 20 items per page for mobile performance
+        page = request.query_params.get('page', None)
+        limit = 20
+        
+        if page:
+            try:
+                page_num = int(page)
+                offset = (page_num - 1) * limit
+                queryset = queryset[offset:offset + limit]
+            except (ValueError, TypeError):
+                pass
+        else:
+            # Default: return first 30 notices if no pagination requested
+            queryset = queryset[:30]
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class NoticesPublicDetailView(RetrieveAPIView):
     """GET /api/public/notices/<pk>/"""

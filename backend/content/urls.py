@@ -6,7 +6,7 @@ Consolidated URLs from separate feature apps.
 from django.urls import path
 from .views import (
     # Homepage
-    HomepagePublicView,
+    HomepagePublicView, LayoutPublicView,
     
     # Schools / Site Settings
     SiteSettingsAdminView, HeroSectionAdminView,
@@ -87,6 +87,7 @@ urlpatterns = [
     
     # Homepage
     path('public/home/', HomepagePublicView.as_view(), name='public-home'),
+    path('public/layout/', LayoutPublicView.as_view(), name='public-layout'),
     
     # Notices
     path('public/notices/', NoticesPublicListView.as_view(), name='public-notices-list'),

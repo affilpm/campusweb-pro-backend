@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gallery | {% if site_settings %}{{ site_settings.school_name }}{% endif %}{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="relative pt-32 pb-24 bg-gradient-to-br from-pink-900 via-purple-900 to-indigo-900 text-white overflow-hidden">
+    <div class="container mx-auto px-4 relative z-10 text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in">Photo Gallery</h1>
+        <p class="text-lg sm:text-xl text-purple-100/90 max-w-3xl mx-auto">Memories and moments from our school</p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 120" fill="none" class="w-full h-auto"><path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H0Z" fill="white"/></svg>
+    </div>
+</section>
+
+<!-- Gallery by Category -->
+<section class="py-16 md:py-24 bg-white">
+    <div class="container mx-auto px-4">
+        {% for category in categories %}
+        <div class="mb-16 last:mb-0">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span class="w-8 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></span>
+                {{ category.name }}
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for image in category.images.all %}
+                <div class="group relative aspect-square overflow-hidden rounded-xl shadow-lg cursor-pointer">
+                    <img src="{{ image.image.url }}" alt="{{ image.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <div>
+                            {% if image.title %}<p class="text-white font-semibold">{{ image.title }}</p>{% endif %}
+                            {% if image.caption %}<p class="text-white/80 text-sm">{{ image.caption }}</p>{% endif %}
+                        </div>
+                    </div>
+                    {% if image.is_featured %}
+                    <span class="absolute top-2 right-2 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">Featured</span>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="col-span-full text-center text-gray-500 py-8">No images in this category.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-16 text-gray-500">No gallery images available.</div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
