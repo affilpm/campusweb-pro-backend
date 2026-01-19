@@ -399,7 +399,23 @@ class GalleryPublicView(APIView):
         category_slug = request.query_params.get('category')
         if category_slug and category_slug != 'all':
             gallery_qs = gallery_qs.filter(category__slug=category_slug)
-        images_data = list(GalleryImagePublicSerializer(gallery_qs, many=True, context=context).data)
+            
+        # Pagination
+        try:
+            page = int(request.query_params.get('page', 1))
+            limit = int(request.query_params.get('limit', 50))
+            if limit > 100: limit = 100 # Max limit
+        except (ValueError, TypeError):
+            page = 1
+            limit = 50
+            
+        offset = (page - 1) * limit
+        
+        # Slicing
+        gallery_qs = gallery_qs.order_by('-id') # Ensure ordering
+        images_list = gallery_qs[offset:offset + limit]
+
+        images_data = list(GalleryImagePublicSerializer(images_list, many=True, context=context).data)
         
         return Response({
             'categories': categories,

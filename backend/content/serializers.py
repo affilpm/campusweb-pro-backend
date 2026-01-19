@@ -372,7 +372,7 @@ class FacilityDetailSerializer(serializers.ModelSerializer):
         return self.get_cover_image(obj)
 
     def get_gallery(self, obj):
-        images = obj.gallery_images.filter(is_active=True).order_by('order')
+        images = obj.gallery_images.filter(is_active=True).order_by('order')[:30]
         return FacilityImageSerializer(images, many=True, context=self.context).data
 
 
