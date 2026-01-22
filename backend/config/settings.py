@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR.parent / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
@@ -140,10 +140,10 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # AWS S3 / CloudFront Configuration
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', 'wavebuckt12')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', 'AKIAR4PDVA446XXOXD4N')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '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')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
@@ -153,7 +153,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_QUERYSTRING_AUTH = False
 
 # CloudFront Domain
-CLOUDFRONT_DOMAIN = os.getenv('CLOUDFRONT_DOMAIN', 'd2isa6df9sgb8p.cloudfront.net')
+CLOUDFRONT_DOMAIN = os.getenv('CLOUDFRONT_DOMAIN')
 
 # Media URL via CloudFront
 MEDIA_URL = f'https://{CLOUDFRONT_DOMAIN}/media/'
