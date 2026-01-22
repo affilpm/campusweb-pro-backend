@@ -648,6 +648,13 @@ class AdmissionSettingsPublicSerializer(serializers.ModelSerializer):
         return AdmissionStepPublicSerializer(steps, many=True).data
 
 
+class AdmissionStatusSerializer(serializers.ModelSerializer):
+    """Lighter serializer for homepage (just status)."""
+    class Meta:
+        model = AdmissionSettings
+        fields = ['is_open']
+
+
 class AdmissionSettingsAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdmissionSettings

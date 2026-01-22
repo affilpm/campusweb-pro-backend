@@ -41,6 +41,7 @@ from .serializers import (
     
     AdmissionSettingsPublicSerializer, AdmissionStepPublicSerializer,
     AdmissionSettingsAdminSerializer, AdmissionStepAdminSerializer,
+    AdmissionStatusSerializer,
     
     AboutPagePublicSerializer, TimelineEventPublicSerializer, ManagementMemberPublicSerializer,
     AboutPageAdminSerializer, TimelineEventAdminSerializer, ManagementMemberAdminSerializer,
@@ -73,6 +74,7 @@ class HomepagePublicView(APIView):
         about = HomeAboutSection.load()
         principal = PrincipalMessage.load()
         vision_mission = VisionMission.load()
+        admission = AdmissionSettings.load()
         
         # Get list data
         notices = Notice.objects.filter(
@@ -97,8 +99,9 @@ class HomepagePublicView(APIView):
             'about': HomeAboutSectionPublicSerializer(about, context=context).data,
             'principal': PrincipalMessagePublicSerializer(principal, context=context).data,
             'vision_mission': VisionMissionPublicSerializer(vision_mission, context=context).data,
+            'admission': AdmissionStatusSerializer(admission, context=context).data,
             'notices': NoticePublicSerializer(notices, many=True, context=context).data,
-            'events': EventPublicSerializer(events, many=True, context=context).data,
+            'events': EventListPublicSerializer(events, many=True, context=context).data,
             'gallery': GalleryImagePublicSerializer(gallery, many=True, context=context).data,
             'facilities': FacilityPublicSerializer(facilities, many=True, context=context).data,
             'academics': AcademicHighlightPublicSerializer(academics, many=True, context=context).data,
