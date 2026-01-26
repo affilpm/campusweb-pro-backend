@@ -206,7 +206,6 @@ urlpatterns = [
     path('admin/content/infrastructure/<int:pk>/', InfrastructureAdminDetailView.as_view(), name='admin-infrastructure-detail'),
     path('admin/content/fees/', FeesAdminListCreateView.as_view(), name='admin-fees'),
     path('admin/content/fees/<int:pk>/', FeesAdminDetailView.as_view(), name='admin-fees-detail'),
-    
     path('admin/content/documentation/', DocumentationAdminListCreateView.as_view(), name='admin-documentation-list'),
     path('admin/content/documentation/<int:pk>/', DocumentationAdminDetailView.as_view(), name='admin-documentation-detail'),
     

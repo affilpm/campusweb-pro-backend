@@ -827,15 +827,13 @@ class FeesPublicListView(ListAPIView):
     serializer_class = FeesPublicSerializer
     queryset = Fees.objects.filter(is_active=True).order_by('order', 'id')
 
-
 class DocumentsPublicListView(ListAPIView):
     """GET /api/public/documents/ (Documentation)"""
     permission_classes = [AllowAny]
     serializer_class = DocumentationPublicSerializer
     queryset = Documentation.objects.filter(is_active=True).order_by('order', 'id')
 
-
-
+# Admin
 class GeneralInfoAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/general-info/"""
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -885,7 +883,6 @@ class FeesAdminDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = FeesAdminSerializer
     queryset = Fees.objects.all()
-
 
 class DocumentationAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/documentation/"""
