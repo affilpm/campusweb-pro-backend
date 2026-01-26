@@ -370,26 +370,7 @@ class Testimonial(TenantAwareModel):
         return f"{self.name} - {self.role}"
 
 
-# --- Downloads ---
 
-
-
-
-class Documentation(TenantAwareModel):
-    """Documentation/certificates to display (not download)."""
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    file = models.FileField(upload_to=documentation_upload_path, blank=True, null=True)
-    order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ['order', '-created_at']
-        verbose_name = "Documentation"
-        verbose_name_plural = "Documentation"
-
-    def __str__(self):
-        return self.title
 
 
 # --- Academics ---
@@ -636,6 +617,23 @@ class Fees(TenantAwareModel):
         ordering = ['order', 'id']
         verbose_name = "Fees"
         verbose_name_plural = "Fees"
+
+    def __str__(self):
+        return self.title
+
+
+class Documentation(TenantAwareModel):
+    """Documentation/certificates to display (not download)."""
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    file = models.FileField(upload_to=documentation_upload_path, blank=True, null=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+        verbose_name = "Documentation"
+        verbose_name_plural = "Documentation"
 
     def __str__(self):
         return self.title

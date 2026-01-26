@@ -37,9 +37,7 @@ from .views import (
     # Testimonials
     TestimonialsAdminListCreateView, TestimonialsAdminDetailView,
     
-    # Downloads & Documentation
-    DocumentsPublicListView,
-    DocumentationAdminListCreateView, DocumentationAdminDetailView,
+
     
     # Academics
     AcademicsPagePublicView,
@@ -64,10 +62,11 @@ from .views import (
     ResultsAcademicsAdminListCreateView, ResultsAcademicsAdminDetailView,
     InfrastructureAdminListCreateView, InfrastructureAdminDetailView,
     FeesAdminListCreateView, FeesAdminDetailView,
-    
+    DocumentationAdminListCreateView, DocumentationAdminDetailView,
+
     # Public Disclosure Public
     GeneralInfoPublicListView, ResultsAcademicsPublicListView,
-    InfrastructurePublicListView, FeesPublicListView,
+    InfrastructurePublicListView, FeesPublicListView, DocumentsPublicListView,
     
     # SEO
     PageSEOPublicView,
@@ -175,8 +174,6 @@ urlpatterns = [
     path('admin/content/testimonials/<int:pk>/', TestimonialsAdminDetailView.as_view(), name='admin-testimonials-detail'),
     
 
-    path('admin/content/documentation/', DocumentationAdminListCreateView.as_view(), name='admin-documentation-list'),
-    path('admin/content/documentation/<int:pk>/', DocumentationAdminDetailView.as_view(), name='admin-documentation-detail'),
     
     # Academics
     path('admin/content/academics/', AcademicsAdminListCreateView.as_view(), name='admin-academics-list'),
@@ -209,6 +206,9 @@ urlpatterns = [
     path('admin/content/infrastructure/<int:pk>/', InfrastructureAdminDetailView.as_view(), name='admin-infrastructure-detail'),
     path('admin/content/fees/', FeesAdminListCreateView.as_view(), name='admin-fees'),
     path('admin/content/fees/<int:pk>/', FeesAdminDetailView.as_view(), name='admin-fees-detail'),
+    
+    path('admin/content/documentation/', DocumentationAdminListCreateView.as_view(), name='admin-documentation-list'),
+    path('admin/content/documentation/<int:pk>/', DocumentationAdminDetailView.as_view(), name='admin-documentation-detail'),
     
     # SEO
     path('admin/content/seo/', PageSEOAdminListCreateView.as_view(), name='admin-seo'),

@@ -540,25 +540,7 @@ class TestimonialsAdminDetailView(RetrieveUpdateDestroyAPIView):
 
 
 
-class DocumentsPublicListView(ListAPIView):
-    """GET /api/public/documents/ (Documentation)"""
-    permission_classes = [AllowAny]
-    serializer_class = DocumentationPublicSerializer
-    queryset = Documentation.objects.filter(is_active=True).order_by('order', 'id')
 
-class DocumentationAdminListCreateView(ListCreateAPIView):
-    """GET/POST /api/admin/content/documentation/"""
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-    serializer_class = DocumentationAdminSerializer
-    queryset = Documentation.objects.all().order_by('order', 'id')
-
-class DocumentationAdminDetailView(RetrieveUpdateDestroyAPIView):
-    """GET/PUT/DELETE /api/admin/content/documentation/<id>/"""
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-    serializer_class = DocumentationAdminSerializer
-    queryset = Documentation.objects.all()
 
 
 # ==================== ACADEMICS VIEWS ====================
@@ -846,6 +828,13 @@ class FeesPublicListView(ListAPIView):
     queryset = Fees.objects.filter(is_active=True).order_by('order', 'id')
 
 
+class DocumentsPublicListView(ListAPIView):
+    """GET /api/public/documents/ (Documentation)"""
+    permission_classes = [AllowAny]
+    serializer_class = DocumentationPublicSerializer
+    queryset = Documentation.objects.filter(is_active=True).order_by('order', 'id')
+
+
 
 class GeneralInfoAdminListCreateView(ListCreateAPIView):
     """GET/POST /api/admin/content/general-info/"""
@@ -896,6 +885,21 @@ class FeesAdminDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = FeesAdminSerializer
     queryset = Fees.objects.all()
+
+
+class DocumentationAdminListCreateView(ListCreateAPIView):
+    """GET/POST /api/admin/content/documentation/"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    serializer_class = DocumentationAdminSerializer
+    queryset = Documentation.objects.all().order_by('order', 'id')
+
+class DocumentationAdminDetailView(RetrieveUpdateDestroyAPIView):
+    """GET/PUT/DELETE /api/admin/content/documentation/<id>/"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    serializer_class = DocumentationAdminSerializer
+    queryset = Documentation.objects.all()
 
 
 # ==================== SEO VIEWS ====================

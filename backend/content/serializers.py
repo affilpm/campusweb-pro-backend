@@ -478,34 +478,7 @@ class TestimonialAdminSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# --- Downloads ---
 
-
-
-
-class DocumentationPublicSerializer(serializers.ModelSerializer):
-    file = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Documentation
-        fields = ['id', 'title', 'description', 'file']
-
-    def get_file(self, obj):
-        if obj.file:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.file.url)
-            return obj.file.url
-        return None
-
-
-
-
-
-class DocumentationAdminSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Documentation
-        fields = '__all__'
 
 
 # --- Academics ---
@@ -808,6 +781,28 @@ class InfrastructureAdminSerializer(serializers.ModelSerializer):
 class FeesAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fees
+        fields = '__all__'
+
+
+class DocumentationPublicSerializer(serializers.ModelSerializer):
+    file = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Documentation
+        fields = ['id', 'title', 'description', 'file']
+
+    def get_file(self, obj):
+        if obj.file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.file.url)
+            return obj.file.url
+        return None
+
+
+class DocumentationAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Documentation
         fields = '__all__'
 
 
