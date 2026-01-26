@@ -38,7 +38,7 @@ staticfiles/
 .vercel
 frontend-school/
 
+
 # Agent artifacts
 .agent/
 .gemini/
-# test ignoreschool-mpa/

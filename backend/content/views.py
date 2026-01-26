@@ -339,9 +339,10 @@ class NoticesPublicListView(ListAPIView):
         return Response(serializer.data)
 
 class NoticesPublicDetailView(RetrieveAPIView):
-    """GET /api/public/notices/<pk>/"""
+    """GET /api/public/notices/<slug>/"""
     permission_classes = [AllowAny]
     serializer_class = NoticePublicSerializer
+    lookup_field = 'slug'
     queryset = Notice.objects.filter(status='published')
 
 # Admin

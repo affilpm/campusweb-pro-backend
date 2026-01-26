@@ -163,6 +163,7 @@ class Notice(TenantAwareModel):
         ARCHIVED = 'archived', 'Archived'
 
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=300, unique=True, blank=True)
     content = models.TextField()
     attachment = models.FileField(upload_to=notices_upload_path, blank=True, null=True)
     is_important = models.BooleanField(default=False)
@@ -174,6 +175,17 @@ class Notice(TenantAwareModel):
         ordering = ['-is_important', '-publish_date', '-created_at']
         verbose_name = "Notice"
         verbose_name_plural = "Notices"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Notice.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -264,7 +276,7 @@ class GalleryImage(TenantAwareModel):
 class Facility(TenantAwareModel):
     """School facilities."""
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     short_description = models.TextField(default="", help_text="Brief description for cards")
     long_description = models.TextField(blank=True, default="", help_text="Detailed description")
     icon = models.CharField(max_length=50, default="🏫", help_text="Emoji icon")

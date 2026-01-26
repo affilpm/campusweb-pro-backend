@@ -210,7 +210,7 @@ class NoticePublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notice
         fields = [
-            'id', 'title', 'content', 'attachment',
+            'id', 'title', 'slug', 'content', 'attachment',
             'is_important', 'publish_date'
         ]
 

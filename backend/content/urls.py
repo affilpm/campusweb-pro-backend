@@ -91,7 +91,7 @@ urlpatterns = [
     
     # Notices
     path('public/notices/', NoticesPublicListView.as_view(), name='public-notices-list'),
-    path('public/notices/<int:pk>/', NoticesPublicDetailView.as_view(), name='public-notices-detail'),
+    path('public/notices/<slug:slug>/', NoticesPublicDetailView.as_view(), name='public-notices-detail'),
     
     # Events
     path('public/events/', EventsPublicListView.as_view(), name='public-events-list'),
