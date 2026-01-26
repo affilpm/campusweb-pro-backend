@@ -173,9 +173,6 @@ STORAGES = {
     }
 }
 
-# Static files (served locally in dev, can use S3 in production if needed)
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Default primary key field type
@@ -262,10 +259,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://api.novelschoolindia.com',
     'https://novelschoolindia.com',
     'https://www.novelschoolindia.com',
-    'https://school-frontend-sandy-nine.vercel.app',  # Vercel Frontend
-    'https://novelschoolindia.com',
-    'https://www.novelschoolindia.com',
-    'https://api.novelschoolindia.com',
+    'https://school-frontend-sandy-nine.vercel.app',
 ]
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
