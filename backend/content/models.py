@@ -45,6 +45,10 @@ class SiteSettings(SingletonTenantModel):
     youtube_url = models.URLField(blank=True, default="")
     linkedin_url = models.URLField(blank=True, default="")
     google_maps_link = models.URLField(blank=True, default="", help_text="Link to Google Maps location")
+    
+    # Operating Hours
+    school_hours = models.TextField(blank=True, default="", help_text="School hours (JSON or plain text)")
+    office_hours = models.TextField(blank=True, default="", help_text="Office hours (JSON or plain text)")
 
     class Meta:
         verbose_name = "Site Settings"
@@ -664,12 +668,7 @@ class ContactPage(SingletonTenantModel):
     """Contact page settings."""
     hero_title = models.CharField(max_length=255, default="Contact Us")
     hero_subtitle = models.TextField(blank=True)
-    address = models.TextField(blank=True)
-    phone = models.CharField(max_length=50, blank=True)
-    email = models.EmailField(blank=True)
     map_embed_code = models.TextField(blank=True, help_text="Google Maps embed iframe code")
-    office_hours = models.TextField(blank=True)
-    school_hours = models.TextField(blank=True)
 
     class Meta:
         verbose_name = "Contact Page"

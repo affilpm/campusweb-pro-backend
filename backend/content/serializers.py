@@ -30,7 +30,8 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
             'address', 'phone', 'email',  # Use mapped field names
             'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
             'google_maps_link',
-            'footer_text'
+            'footer_text',
+            'school_hours', 'office_hours'
         ]
 
 
@@ -81,18 +82,10 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
         return obj.footer_text or ""
 
     def get_school_hours(self, obj):
-        try:
-            contact_page = ContactPage.load()
-            return contact_page.school_hours
-        except:
-            return ""
+        return obj.school_hours or ""
 
     def get_office_hours(self, obj):
-        try:
-            contact_page = ContactPage.load()
-            return contact_page.office_hours
-        except:
-            return ""
+        return obj.office_hours or ""
 
 
 class HeroSectionPublicSerializer(serializers.ModelSerializer):
@@ -832,11 +825,11 @@ class PageSEOAdminSerializer(serializers.ModelSerializer):
 # --- Contact ---
 
 class ContactPagePublicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContactPage
     address = serializers.SerializerMethodField()
     phone = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
+    school_hours = serializers.SerializerMethodField()
+    office_hours = serializers.SerializerMethodField()
 
     class Meta:
         model = ContactPage
@@ -847,17 +840,24 @@ class ContactPagePublicSerializer(serializers.ModelSerializer):
         ]
 
     def get_address(self, obj):
-        # Source from SiteSettings if available, else fallback to model
         settings = SiteSettings.load()
-        return settings.school_address or obj.address
+        return settings.school_address or ""
 
     def get_phone(self, obj):
         settings = SiteSettings.load()
-        return settings.school_phone or obj.phone
+        return settings.school_phone or ""
 
     def get_email(self, obj):
         settings = SiteSettings.load()
-        return settings.school_email or obj.email
+        return settings.school_email or ""
+
+    def get_school_hours(self, obj):
+        settings = SiteSettings.load()
+        return settings.school_hours or ""
+
+    def get_office_hours(self, obj):
+        settings = SiteSettings.load()
+        return settings.office_hours or ""
 
 
 class ContactSubmissionSerializer(serializers.ModelSerializer):
