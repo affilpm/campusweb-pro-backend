@@ -26,7 +26,7 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettings
         fields = [
-            'id', 'school_name', 'school_motto', 'school_logo', 'favicon',
+            'id', 'school_name', 'school_motto', 'school_description', 'school_logo', 'favicon',
             'address', 'phone', 'email',  # Use mapped field names
             'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
             'google_maps_link',
@@ -49,7 +49,7 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettings
         fields = [
-            'id', 'school_name', 'school_motto', 'school_logo', 'favicon',
+            'id', 'school_name', 'school_motto', 'school_description', 'school_logo', 'favicon',
             'address', 'phone', 'email',
             'facebook_url', 'instagram_url', 'twitter_url', 'youtube_url', 'linkedin_url',
             'google_maps_link',
@@ -75,11 +75,10 @@ class SiteSettingsPublicSerializer(serializers.ModelSerializer):
 
     def get_school_motto(self, obj):
         # Return a default motto if not available in model
-        return "Empowering Minds, Shaping Futures"
+        return obj.school_motto or "Empowering Minds, Shaping Futures"
 
     def get_footer_text(self, obj):
-        # Return empty string (frontend has fallback)
-        return ""
+        return obj.footer_text or ""
 
     def get_school_hours(self, obj):
         try:
@@ -760,6 +759,22 @@ class FeesPublicSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'value']
 
 
+class DocumentationPublicSerializer(serializers.ModelSerializer):
+    file = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Documentation
+        fields = ['id', 'title', 'description', 'file']
+
+    def get_file(self, obj):
+        if obj.file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.file.url)
+            return obj.file.url
+        return None
+
+
 class GeneralInfoAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralInfo
@@ -782,22 +797,6 @@ class FeesAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fees
         fields = '__all__'
-
-
-class DocumentationPublicSerializer(serializers.ModelSerializer):
-    file = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Documentation
-        fields = ['id', 'title', 'description', 'file']
-
-    def get_file(self, obj):
-        if obj.file:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.file.url)
-            return obj.file.url
-        return None
 
 
 class DocumentationAdminSerializer(serializers.ModelSerializer):

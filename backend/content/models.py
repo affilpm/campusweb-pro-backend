@@ -35,6 +35,7 @@ class SiteSettings(SingletonTenantModel):
     favicon = models.ImageField(upload_to=logos_upload_path, blank=True, null=True)
     
     school_motto = models.CharField(max_length=500, blank=True, default="")
+    school_description = models.TextField(blank=True, default="Committed to providing quality education and nurturing future leaders since establishment.", help_text="Short description displayed in footer below motto")
     footer_text = models.TextField(blank=True, default="")
 
     # Social Media
