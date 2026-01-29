@@ -1,31 +1,16 @@
-# 🔐 School Management System (Test Phase)
+# 🔐 School Management System
 
 A secure, production-ready school management system built with **Django + DRF** backend and **Next.js** frontend.
 
-> [!WARNING]
-> **TEST PHASE**: The frontend and backend are currently split into separate repositories for testing a major refactor. Please follow the "Repositories & Branches" section below closely.
-
 ## 📋 Table of Contents
 
-- [Repositories & Branches](#repositories--branches-test-phase)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [API Reference](#api-reference)
 - [Authentication Flow](#authentication-flow)
 - [Security Features](#security-features)
-- [Deployment (Critical Info)](#deployment-cicd-critical)
-
-## 🕸 Repositories & Branches (Test Phase)
-
-The project is currently split into two separate repositories.
-
-| Component | Repository | Active Branch |
-|-----------|------------|---------------|
-| **Backend** | `affilpm/school` | `new-test-phase-code-refactored-backend-and-frontend-changed` |
-| **Frontend** | `affilpm/school-frontend` | `new-test-phase-code-refactored-backend-and-frontend-changed` |
-
-**Note**: The backend deployment is currently set to `[skip ci]` to prevent crashing the production database until a manual reset is performed.
+- [Deployment](#deployment)
 
 ## 🏗 Architecture
 
@@ -48,11 +33,9 @@ The project is currently split into two separate repositories.
 
 ## 📁 Project Structure
 
-*Note: In the current Test Phase, these are in separate repositories.*
-
 ```
 .
-├── backend/                    # Django Backend (In `school` repo)
+├── backend/                    # Django Backend
 │   ├── apps/                   # Django Apps (academics, authentication, core, etc.)
 │   ├── config/                 # Django project settings
 │   │   ├── settings.py         # Main configuration
@@ -60,7 +43,7 @@ The project is currently split into two separate repositories.
 │   ├── .env                    # Environment variables
 │   └── Dockerfile              # Setup for containerization
 │
-└── frontend/                   # Next.js Frontend (In `school-frontend` repo)
+└── frontend/                   # Next.js Frontend
     ├── src/
     │   ├── app/                # App Router (Admin & Public)
     │   ├── components/         # Reusable Components
@@ -74,26 +57,18 @@ The project is currently split into two separate repositories.
 
 ### Backend Setup (Django)
 
-1. **Clone the backend repo and switch branch**:
+1. **Setup Environment**:
    ```bash
-   git clone https://github.com/affilpm/school.git backend-repo
-   cd backend-repo
-   git checkout new-test-phase-code-refactored-backend-and-frontend-changed
-   ```
-
-2. **Setup Environment**:
-   ```bash
+   cd backend
    python3 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    
    # Install dependencies
-   pip install django djangorestframework djangorestframework-simplejwt django-cors-headers psycopg2-binary python-dotenv
    pip install -r requirements.txt
    ```
 
-3. **Run Migrations & Server**:
+2. **Run Migrations & Server**:
    ```bash
-   # WARNING: This will set up the new database structure
    python manage.py migrate
    python manage.py createdefaultadmin
    python manage.py runserver
@@ -102,15 +77,9 @@ The project is currently split into two separate repositories.
 
 ### Frontend Setup (Next.js)
 
-1. **Clone the frontend repo and switch branch**:
+1. **Install & Run**:
    ```bash
-   git clone https://github.com/affilpm/school-frontend.git frontend-repo
-   cd frontend-repo
-   git checkout new-test-phase-code-refactored-backend-and-frontend-changed
-   ```
-
-2. **Install & Run**:
-   ```bash
+   cd frontend
    npm install
    npm run dev
    ```
@@ -129,7 +98,7 @@ The project is currently split into two separate repositories.
 |-------|----------|
 | `admin@school.edu` | `<your_password>` |
 
-## � API Reference
+## 📖 API Reference
 
 ### Authentication Endpoints
 
@@ -239,7 +208,7 @@ REFRESH_TOKEN_LIFETIME_DAYS=7
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-## 🚢 Deployment (CI/CD) & Critical Refactor Info
+## 🚢 Deployment
 
 The project uses a **Hybrid Deployment Strategy** automation via **GitHub Actions** and **Docker Hub**.
 
@@ -253,30 +222,17 @@ The project uses a **Hybrid Deployment Strategy** automation via **GitHub Action
     docker compose up -d       # Restarts containers
     ```
 
-### ⚠️ CRITICAL: Database Refactor & First Deployment
-**This Test Phase includes a complete database refactor.** Standard migration strategies will **FAIL** because the migration history has been broken/reset.
+### Manual Deployment
+If CI/CD fails, you can deploy manually from your machine:
+```bash
+# 1. Build and Push
+cd backend
+docker build --platform linux/amd64 -t affil/school-backend:latest .
+docker push affil/school-backend:latest
 
-**For the first deployment of this phase, you MUST reset the production database:**
-
-1. **SSH into the server**:
-   ```bash
-   ssh root@your-server-ip
-   ```
-
-2. **Stop and Wipe**:
-   ```bash
-   cd ~/school
-   docker compose down
-   # CAUTION: This deletes all data
-   docker volume rm school_postgres_data
-   ```
-
-3. **Pull & Start**:
-   ```bash
-   git pull origin new-test-phase-code-refactored-backend-and-frontend-changed
-   # Ensure docker-compose.yml pulls the correct image tag if changed
-   docker compose up -d --build
-   ```
+# 2. Update Server
+ssh root@your-server-ip "cd ~/school && docker compose pull && docker compose up -d"
+```
 
 ## 📄 License
 
