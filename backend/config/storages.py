@@ -2,29 +2,43 @@ from storages.backends.s3boto3 import S3Boto3Storage
 from django.conf import settings
 
 
-class CloudFrontMediaStorage(S3Boto3Storage):
+class R2MediaStorage(S3Boto3Storage):
     """
-    Media storage backend that uploads to S3 and serves via CloudFront.
+    Dedicated Cloudflare R2 storage backend for Media.
     """
     location = 'media'
     default_acl = None
     file_overwrite = False
-    custom_domain = getattr(settings, 'CLOUDFRONT_DOMAIN', None)
+    querystring_auth = False
     
     def __init__(self, *args, **kwargs):
-        # Allow bucket_name to be passed from STORAGES config
-        if 'bucket_name' in kwargs:
-            self.bucket_name = kwargs.pop('bucket_name')
-        if 'location' in kwargs:
-            self.location = kwargs.pop('location')
-        if 'file_overwrite' in kwargs:
-            self.file_overwrite = kwargs.pop('file_overwrite')
         super().__init__(*args, **kwargs)
+        # Optimize R2 connection settings
+        from botocore.config import Config
+        self.config = Config(
+            signature_version='s3v4',
+            connect_timeout=15,
+            read_timeout=30,
+            retries={'max_attempts': 3}
+        )
 
 
-class StaticStorage(S3Boto3Storage):
+class R2StaticStorage(S3Boto3Storage):
     """
-    Static files storage backend (optional, for production).
+    Dedicated Cloudflare R2 storage backend for Static files.
     """
     location = 'static'
     default_acl = None
+    file_overwrite = True
+    querystring_auth = False
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Optimize R2 connection settings
+        from botocore.config import Config
+        self.config = Config(
+            signature_version='s3v4',
+            connect_timeout=15,
+            read_timeout=30,
+            retries={'max_attempts': 3}
+        )

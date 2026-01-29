@@ -42,3 +42,6 @@ frontend-school/
 # Agent artifacts
 .agent/
 .gemini/
+
+# Web Portal
+web-portal/
