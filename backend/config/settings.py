@@ -29,19 +29,26 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     # Core app
-    'core',
-    # Content app (Monolithic)
-    'content',
-    # Legacy app (to be removed after migration)
-    'authentication',
+    'apps.core',
+    'apps.authentication',
     'storages', # Django Storages for R2/S3
+    # New Architecture Apps
+    # 'apps.core', # Conflict with existing 'core' app
+    'apps.landing',
+    'apps.school_info',
+    'apps.admissions',
+    'apps.academics',
+    'apps.communication',
+    'apps.gallery',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -66,7 +74,8 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.template.context_processors.auth',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -131,45 +140,35 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# R2 Custom Domain (includes https:// at start)
+R2_CUSTOM_DOMAIN = os.getenv('R2_CUSTOM_DOMAIN', '')
+# Remove https:// for django-storages if it exists
+CLEAN_R2_DOMAIN = R2_CUSTOM_DOMAIN.replace('https://', '').replace('http://', '')
+
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = f'{R2_CUSTOM_DOMAIN}/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (Uploads)
-MEDIA_URL = 'media/'
+MEDIA_URL = f'{R2_CUSTOM_DOMAIN}/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# AWS S3 / CloudFront Configuration
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-
-# Set to False to allow public access to files without query parameters
+# R2 Storage Settings
+AWS_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('R2_ENDPOINT_URL')
+AWS_S3_CUSTOM_DOMAIN = CLEAN_R2_DOMAIN
+AWS_S3_REGION_NAME = 'auto'
 AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = True
 
-# CloudFront Domain
-CLOUDFRONT_DOMAIN = os.getenv('CLOUDFRONT_DOMAIN')
-
-# Media URL via CloudFront
-MEDIA_URL = f'https://{CLOUDFRONT_DOMAIN}/media/'
-
-# Storage backends using modern Django STORAGES format
 STORAGES = {
     "default": {
-        "BACKEND": "config.storages.CloudFrontMediaStorage",
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-            "location": "media",
-            "file_overwrite": False,
-        }
+        "BACKEND": "config.storages.R2MediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "config.storages.R2StaticStorage",
     }
 }
 
@@ -189,7 +188,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'EXCEPTION_HANDLER': 'authentication.utils.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'apps.authentication.utils.custom_exception_handler',
     
     # Throttling (Rate Limiting)
     'DEFAULT_THROTTLE_CLASSES': [
@@ -203,15 +202,15 @@ REST_FRAMEWORK = {
     },
 }
 
-# Simple JWT Configuration
-ACCESS_TOKEN_LIFETIME = int(os.getenv('ACCESS_TOKEN_LIFETIME_MINUTES', 15))
+# Simple JWT Configuration - Increased for stability
+ACCESS_TOKEN_LIFETIME = int(os.getenv('ACCESS_TOKEN_LIFETIME_MINUTES', 60))
 REFRESH_TOKEN_LIFETIME = int(os.getenv('REFRESH_TOKEN_LIFETIME_DAYS', 7))
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=ACCESS_TOKEN_LIFETIME),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=REFRESH_TOKEN_LIFETIME),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
     
     'ALGORITHM': 'HS256',
@@ -245,12 +244,6 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# Cookie Settings for Refresh Token
-REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
-REFRESH_TOKEN_COOKIE_HTTPONLY = True
-REFRESH_TOKEN_COOKIE_SECURE = not DEBUG  # True in production (HTTPS)
-REFRESH_TOKEN_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax' # 'None' allows cross-site (Frontend -> Backend)
-REFRESH_TOKEN_COOKIE_PATH = '/'
 
 # CSRF Settings (Required for HTTPS Admin/Login)
 CSRF_TRUSTED_ORIGINS = [

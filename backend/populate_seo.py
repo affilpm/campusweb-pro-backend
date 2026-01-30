@@ -5,7 +5,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
-from content.models import PageSEO
+from apps.school_info.models import PageSEO
 
 def populate_seo():
     pages = [
