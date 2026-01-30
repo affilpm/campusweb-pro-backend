@@ -214,17 +214,19 @@ class FacilityImageSerializer(serializers.ModelSerializer):
         return None
 
 class FacilityPublicSerializer(serializers.ModelSerializer):
-    cover_image = serializers.SerializerMethodField()
-    gallery_images = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
     
     class Meta:
         model = Facility
-        fields = ['id', 'name', 'slug', 'short_description', 'long_description', 'icon', 'cover_image', 'gallery_images']
+        fields = ['id', 'name', 'slug', 'short_description', 'long_description', 'icon', 'cover_image', 'image', 'gallery_images']
         
     def get_cover_image(self, obj):
         if obj.cover_image:
             return obj.cover_image.url
         return None
+
+    def get_image(self, obj):
+        return self.get_cover_image(obj)
 
     def get_gallery_images(self, obj):
         # Only show active images in correct order

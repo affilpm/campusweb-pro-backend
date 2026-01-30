@@ -117,93 +117,34 @@ class AdminLogoutView(APIView):
             return response
 
 
-class TokenRefreshView(APIView):
+from rest_framework_simplejwt.views import TokenRefreshView as SimpleTokenRefreshView
+
+@method_decorator(csrf_exempt, name='dispatch')
+class TokenRefreshView(SimpleTokenRefreshView):
     """
     Token Refresh Endpoint.
     
     POST /api/admin/auth/refresh/
     
-    Uses refresh token from HTTP-only cookie to issue new access token.
+    Uses refresh token from body to issue new access token.
+    Inherits from SimpleJWT's TokenRefreshView for robust handling of rotation and blacklisting.
     """
     permission_classes = [AllowAny]
     
-    def post(self, request):
-        # Get refresh token from request body
-        refresh_token = request.data.get('refresh')
-        
-        if not refresh_token:
-            return Response(
-                {
-                    'success': False,
-                    'message': 'Refresh token not found. Send as {"refresh": "token"} in body or via cookie.',
-                },
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
+    def post(self, request, *args, **kwargs):
         try:
-            # Validate the refresh token
-            refresh = RefreshToken(refresh_token)
-            
-            # If ROTATE_REFRESH_TOKENS is True, create new refresh token BEFORE blacklisting old one
-            if settings.SIMPLE_JWT.get('ROTATE_REFRESH_TOKENS', False):
-                from django.contrib.auth import get_user_model
-                User = get_user_model()
-                user_id = refresh.payload.get('user_id')
-                
-                try:
-                    user = User.objects.get(id=user_id)
-                    # Create new refresh token FIRST
-                    new_refresh = RefreshToken.for_user(user)
-                    # Get access token from the NEW refresh token
-                    access_token = str(new_refresh.access_token)
-                    
-                    response_data = {
-                        'success': True,
-                        'access': access_token,
-                        'refresh': str(new_refresh),  # Include new refresh token for localStorage
-                    }
-                    
-                    response = Response(response_data, status=status.HTTP_200_OK)
-                    
-                    
-                    # NOW blacklist the old token (after new one is ready)
-                    if settings.SIMPLE_JWT.get('BLACKLIST_AFTER_ROTATION', True):
-                        try:
-                            refresh.blacklist()
-                        except AttributeError:
-                            pass
-                    
-                    return response
-                    
-                except User.DoesNotExist:
-                    return Response(
-                        {
-                            'success': False,
-                            'message': 'User not found',
-                        },
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
-            else:
-                # No rotation - just get access token from existing refresh token
-                access_token = str(refresh.access_token)
-                
-                response_data = {
-                    'success': True,
-                    'access': access_token,
-                }
-                
-                return Response(response_data, status=status.HTTP_200_OK)
-            
-        except TokenError as e:
-            # Clear the invalid/expired cookie so the browser stops sending it
-            response = Response(
+            response = super().post(request, *args, **kwargs)
+            if response.status_code == 200:
+                response.data['success'] = True
+            return response
+        except (TokenError, InvalidToken):
+            return Response(
                 {
                     'success': False,
                     'message': 'Invalid or expired refresh token',
                 },
                 status=status.HTTP_401_UNAUTHORIZED
             )
-            return response
 
 
 

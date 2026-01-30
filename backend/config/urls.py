@@ -23,5 +23,7 @@ urlpatterns = [
 
 # Static/Media
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    if settings.MEDIA_URL and not settings.MEDIA_URL.startswith(('http://', 'https://')):
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    if settings.STATIC_URL and not settings.STATIC_URL.startswith(('http://', 'https://')):
+        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -153,28 +153,22 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = f'{R2_CUSTOM_DOMAIN}/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# R2 Storage Settings
+AWS_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('R2_ENDPOINT_URL')
+AWS_S3_CUSTOM_DOMAIN = CLEAN_R2_DOMAIN
+AWS_S3_REGION_NAME = 'auto'
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = True
+
 STORAGES = {
     "default": {
         "BACKEND": "config.storages.R2MediaStorage",
-        "OPTIONS": {
-            "bucket_name": os.getenv('R2_BUCKET_NAME'),
-            "endpoint_url": os.getenv('R2_ENDPOINT_URL'),
-            "access_key": os.getenv('R2_ACCESS_KEY_ID'),
-            "secret_key": os.getenv('R2_SECRET_ACCESS_KEY'),
-            "region_name": "auto",
-            "custom_domain": CLEAN_R2_DOMAIN,
-        }
     },
     "staticfiles": {
         "BACKEND": "config.storages.R2StaticStorage",
-        "OPTIONS": {
-            "bucket_name": os.getenv('R2_BUCKET_NAME'),
-            "endpoint_url": os.getenv('R2_ENDPOINT_URL'),
-            "access_key": os.getenv('R2_ACCESS_KEY_ID'),
-            "secret_key": os.getenv('R2_SECRET_ACCESS_KEY'),
-            "region_name": "auto",
-            "custom_domain": CLEAN_R2_DOMAIN,
-        }
     }
 }
 
@@ -216,7 +210,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=ACCESS_TOKEN_LIFETIME),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=REFRESH_TOKEN_LIFETIME),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
     
     'ALGORITHM': 'HS256',

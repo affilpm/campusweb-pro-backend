@@ -132,27 +132,34 @@ def results_upload_path(instance, filename):
     title_slug = slugify(instance.title) if instance.title else 'result'
     return unique_upload_path(instance, filename, f'academics/results/{title_slug}')
 
-def compress_image(image, max_size=(1920, 1080), quality=85):
+def compress_image(image, max_size=(1920, 1080), quality=85, is_logo=False):
     """
     Compresses an image using Pillow.
     - Resizes to max_size (keeping aspect ratio)
     - Converts to WebP (optimized)
+    - Preserves transparency (alpha channel)
     - Returns a ContentFile
     """
     if not image:
         return image
 
     # Optimization: Skip if it's already a saved FieldFile or similar (not a fresh upload)
-    # Uploaded files usually have a 'file' attribute that is a BytesIO/TemporaryFile 
-    # and has a 'content_type' attribute. FieldFiles are just path-like.
     if hasattr(image, 'file') and not hasattr(image.file, 'content_type'):
         return image
+
+    # High quality settings for logos
+    if is_logo:
+        quality = 95
+        # Don't resize logos unless they are absolutely massive (e.g. > 1024px)
+        max_size = (1024, 1024)
 
     try:
         img = Image.open(image)
         
-        # Convert RGBA to RGB if needed (for JPEG/WebP)
-        if img.mode in ('RGBA', 'P'):
+        # Preserve transparency/alpha channel
+        if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+            img = img.convert('RGBA')
+        else:
             img = img.convert('RGB')
             
         # Resize if larger than max_size
@@ -160,14 +167,50 @@ def compress_image(image, max_size=(1920, 1080), quality=85):
         
         # Save to buffer
         buffer = io.BytesIO()
-        img.save(buffer, format='WEBP', quality=quality, optimize=True)
+        # WebP supports transparency and is highly optimized
+        img.save(buffer, format='WEBP', quality=quality, optimize=True, lossless=is_logo)
         buffer.seek(0)
         
         # Create new filename
-        original_name = image.name.split('.')[0]
+        original_name = os.path.splitext(image.name)[0]
         new_name = f"{original_name}.webp"
         
         return ContentFile(buffer.read(), name=new_name)
     except Exception as e:
         print(f"Error compressing image: {e}")
         return image
+def compress_pdf(pdf_file):
+    """
+    Compresses a PDF file using pypdf.
+    """
+    if not pdf_file:
+        return pdf_file
+
+    # Optimization: Skip if it's already a saved FieldFile or similar (not a fresh upload)
+    if hasattr(pdf_file, 'file') and not hasattr(pdf_file.file, 'content_type'):
+        return pdf_file
+
+    try:
+        from pypdf import PdfReader, PdfWriter
+        
+        # Read the PDF
+        reader = PdfReader(pdf_file)
+        writer = PdfWriter()
+
+        # Add all pages to the writer
+        for page in reader.pages:
+            writer.add_page(page)
+
+        # Apply compression to each page
+        for page in writer.pages:
+            page.compress_content_streams()
+
+        # Save to buffer
+        buffer = io.BytesIO()
+        writer.write(buffer)
+        buffer.seek(0)
+        
+        return ContentFile(buffer.read(), name=pdf_file.name)
+    except Exception as e:
+        print(f"Error compressing PDF: {e}")
+        return pdf_file

@@ -186,3 +186,49 @@ docker compose exec backend python manage.py migrate
 - **500 Server Error**: Check logs: `docker compose logs -f backend`
 - **Connection Refused**: Check if Nginx is running: `docker compose ps`
 - **Database Connection Error**: Ensure `POSTGRES_HOST=db` in `.env`.
+
+---
+
+## 7. Destructive Updates & Data Restoration
+
+**⚠️ WARNING: Use this ONLY if you have refactored models and need to reset the database.**
+
+### Pre-requisites
+1. **Local Backup**: Ensure you have `backend/db_backup_full_YYYYMMDD_HHMMSS.json` on your local machine.
+2. **Transfer Backup**: Upload the backup to the server.
+   ```bash
+   # Run this from your LOCAL machine
+   scp backend/db_backup_full_YYYYMMDD_HHMMSS.json root@<DROPLET_IP>:/root/school/backend/backup.json
+   ```
+
+### Reset & Restore Procedure
+Connect to your server and run these commands:
+
+1. **Pull Latest Code**
+   ```bash
+   cd school
+   git pull origin main
+   ```
+
+2. **Rebuild Containers**
+   ```bash
+   docker compose up -d --build --force-recreate
+   ```
+
+3. **Reset Database (Wipes ALL Data)**
+   ```bash
+   docker compose exec backend python manage.py flush --no-input
+   ```
+
+4. **Apply New Schema**
+   ```bash
+   docker compose exec backend python manage.py migrate
+   ```
+
+5. **Restore Data**
+   ```bash
+   docker compose exec backend python manage.py loaddata backup.json
+   ```
+
+6. **Verify**
+   Check if the site is running and data is present.

@@ -585,11 +585,17 @@ class DocumentationAdminView(APIView):
         return Response(DocumentationAdminSerializer(items, many=True, context={'request': request}).data)
 
     def post(self, request):
-        serializer = DocumentationAdminSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = DocumentationAdminSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            print(f"Validation Errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DocumentationDetailAdminView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]

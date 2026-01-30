@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from apps.core.models import TenantAwareModel
-from apps.core.utils import notices_upload_path, events_upload_path, compress_image
+from apps.core.utils import notices_upload_path, events_upload_path, compress_image, compress_pdf
 
 class Notice(TenantAwareModel):
     """
@@ -29,9 +29,15 @@ class Notice(TenantAwareModel):
 
     def save(self, *args, **kwargs):
         if self.attachment:
-            if self.attachment.name.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+            ext = self.attachment.name.lower()
+            if ext.endswith(('.png', '.jpg', '.jpeg', '.webp')):
                 try:
                     self.attachment = compress_image(self.attachment)
+                except Exception:
+                    pass
+            elif ext.endswith('.pdf'):
+                try:
+                    self.attachment = compress_pdf(self.attachment)
                 except Exception:
                     pass
 

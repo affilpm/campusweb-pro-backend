@@ -1,6 +1,6 @@
 from django.db import models
 from apps.core.models import TenantAwareModel, SingletonTenantModel
-from apps.core.utils import academics_upload_path, compress_image
+from apps.core.utils import academics_upload_path, compress_image, compress_pdf
 
 class ClassCategory(TenantAwareModel):
     """Class categories (e.g., Primary, Secondary)."""
@@ -74,6 +74,18 @@ class AcademicsPage(SingletonTenantModel):
             self.hero_image = compress_image(self.hero_image)
         if self.curriculum_image:
             self.curriculum_image = compress_image(self.curriculum_image)
+        if self.calendar_file:
+            ext = self.calendar_file.name.lower()
+            if ext.endswith(('.png', '.jpg', '.jpeg', '.webp')):
+                try:
+                    self.calendar_file = compress_image(self.calendar_file)
+                except Exception:
+                    pass
+            elif ext.endswith('.pdf'):
+                try:
+                    self.calendar_file = compress_pdf(self.calendar_file)
+                except Exception:
+                    pass
         super().save(*args, **kwargs)
 
     def __str__(self):

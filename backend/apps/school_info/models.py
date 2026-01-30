@@ -5,7 +5,8 @@ from apps.core.utils import (
     facilities_gallery_upload_path, achievements_upload_path,
     testimonials_upload_path, about_timeline_upload_path,
     about_management_upload_path, results_upload_path,
-    documentation_upload_path, seo_upload_path, about_upload_path, compress_image
+    documentation_upload_path, seo_upload_path, about_upload_path, compress_image,
+    compress_pdf
 )
 from django.utils.text import slugify
 
@@ -45,9 +46,9 @@ class SiteSettings(SingletonTenantModel):
 
     def save(self, *args, **kwargs):
         if self.school_logo:
-            self.school_logo = compress_image(self.school_logo)
+            self.school_logo = compress_image(self.school_logo, is_logo=True)
         if self.favicon:
-            self.favicon = compress_image(self.favicon)
+            self.favicon = compress_image(self.favicon, is_logo=True)
         super().save(*args, **kwargs)
 
 
@@ -227,7 +228,7 @@ class Testimonial(TenantAwareModel):
 
 class GeneralInfo(TenantAwareModel):
     """General information items for public disclosure."""
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     value = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -243,11 +244,26 @@ class GeneralInfo(TenantAwareModel):
 
 class ResultsAcademics(TenantAwareModel):
     """Results and academics for public disclosure."""
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     value = models.TextField(blank=True)
-    file = models.FileField(upload_to=results_upload_path, blank=True, null=True)
+    file = models.FileField(upload_to=results_upload_path, max_length=500, blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if self.file:
+            ext = self.file.name.lower()
+            if ext.endswith(('.png', '.jpg', '.jpeg', '.webp')):
+                try:
+                    self.file = compress_image(self.file)
+                except Exception:
+                    pass
+            elif ext.endswith('.pdf'):
+                try:
+                    self.file = compress_pdf(self.file)
+                except Exception:
+                    pass
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['order', 'id']
@@ -260,7 +276,7 @@ class ResultsAcademics(TenantAwareModel):
 
 class Infrastructure(TenantAwareModel):
     """Infrastructure details for public disclosure."""
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     value = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -276,7 +292,7 @@ class Infrastructure(TenantAwareModel):
 
 class Fees(TenantAwareModel):
     """Fee structure for public disclosure."""
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     value = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -292,11 +308,26 @@ class Fees(TenantAwareModel):
 
 class Documentation(TenantAwareModel):
     """Documentation/certificates to display (not download)."""
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     description = models.TextField(blank=True)
-    file = models.FileField(upload_to=documentation_upload_path, blank=True, null=True)
+    file = models.FileField(upload_to=documentation_upload_path, max_length=500, blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if self.file:
+            ext = self.file.name.lower()
+            if ext.endswith(('.png', '.jpg', '.jpeg', '.webp')):
+                try:
+                    self.file = compress_image(self.file)
+                except Exception:
+                    pass
+            elif ext.endswith('.pdf'):
+                try:
+                    self.file = compress_pdf(self.file)
+                except Exception:
+                    pass
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['order', '-created_at']
