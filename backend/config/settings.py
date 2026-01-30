@@ -246,15 +246,14 @@ CORS_ALLOW_HEADERS = [
 
 
 # CSRF Settings (Required for HTTPS Admin/Login)
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'https://api.novelschoolindia.com',
-    'https://novelschoolindia.com',
-    'https://www.novelschoolindia.com',
-    'https://school-frontend-sandy-nine.vercel.app',
-]
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Logging Configuration
 # Explicitly configured to log to Console (stdout).
