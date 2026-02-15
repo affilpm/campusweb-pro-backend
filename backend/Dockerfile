@@ -26,7 +26,7 @@ COPY . .
 RUN chmod +x entrypoint.sh
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Run entrypoint (migrations + gunicorn)
 ENTRYPOINT ["./entrypoint.sh"]

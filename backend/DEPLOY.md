@@ -3,6 +3,7 @@
 This guide details the steps to deploy the Django Backend to a DigitalOcean Droplet using Docker, Nginx, and Let's Encrypt SSL.
 
 ## 1. Prerequisites
+
 - **DigitalOcean Droplet** (Ubuntu 22.04 or later).
 - **Domain Name** (e.g., `api.yourschool.com`) pointing to the Droplet's IP via an **A Record**.
 - **SSH Access** to the server.
@@ -10,11 +11,13 @@ This guide details the steps to deploy the Django Backend to a DigitalOcean Drop
 ---
 
 ---
+
 ---
 
 ## 2. Server Setup (First Time)
 
 ### ⚠️ Critical Performance Tuning: Add Swap Memory
+
 **Important:** 1GB Droplets will likely crash without Swap memory when running Docker. Run these commands to create a 2GB swap file:
 
 ```bash
@@ -32,18 +35,22 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ```
 
 ### Install Docker & Docker Compose
+
 Connect to your server via SSH:
+
 ```bash
 ssh root@<DROPLET_IP>
 ```
 
 Run these commands to install Docker:
+
 ```bash
 sudo apt update
 sudo apt install docker.io docker-compose-plugin -y
 ```
 
 ### Clone the Repository
+
 ```bash
 git clone https://github.com/affilpm/school.git
 cd school
@@ -54,7 +61,9 @@ cd school
 ## 3. Configuration
 
 ### Environment Variables (.env)
+
 Create the `.env` file on the server:
+
 ```bash
 nano .env
 ```
@@ -86,55 +95,50 @@ R2_CUSTOM_DOMAIN=pub-<id>.r2.dev
 CORS_ALLOWED_ORIGINS=http://localhost:3000,https://yourschool.com
 ```
 
-### Configure Nginx for HTTPS
-1. Ensure `docker-compose.yml` exposes port 443 and maps certificates:
+### Configure Nginx for HTTPS (Host-Level)
+
+Since Nginx is now removed from Docker, you must install and configure it directly on your server host.
+
+1. **Install Nginx**:
+
+   ```bash
+   sudo apt update
+   sudo apt install nginx -y
+   ```
+
+2. **Expose Backend Port**:
+   Ensure `docker-compose.yml` exposes port 8000:
    ```yaml
-   nginx:
+   backend:
      ports:
-       - "80:80"
-       - "443:443"
-     volumes:
-       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-       - /etc/letsencrypt:/etc/letsencrypt:ro
+       - "127.0.0.1:8000:8000"
    ```
 
 ---
 
 ## 4. SSL Certificates (Certbot)
 
-**Run this ONCE to generate certificates:**
+1. **Install Certbot**:
 
-1. Stop Nginx to free up port 80:
    ```bash
-   docker compose stop nginx
+   sudo apt install certbot python3-certbot-nginx -y
    ```
-2. Run Certbot (Standalone mode):
-   ```bash
-   sudo apt install certbot -y
-   sudo certbot certonly --standalone -d api.yourschool.com
-   ```
-   *Follow the prompts. Certificates will be saved to `/etc/letsencrypt/live/api.yourschool.com/`.*
 
-3. Update `nginx/default.conf` to use the certificates:
+2. **Generate Certificate**:
+
+   ```bash
+   sudo certbot --nginx -d api.yourschool.com
+   ```
+
+   _Follow the prompts. Certbot will automatically configure Nginx with SSL._
+
+3. **Update Nginx Configuration**:
+   The proxy must now point to `127.0.0.1:8000` instead of the Docker service name:
    ```nginx
-   server {
-       listen 80;
-       server_name api.yourschool.com;
-       return 301 https://$host$request_uri;
-   }
-
-   server {
-       listen 443 ssl;
-       server_name api.yourschool.com;
-
-       ssl_certificate /etc/letsencrypt/live/api.yourschool.com/fullchain.pem;
-       ssl_certificate_key /etc/letsencrypt/live/api.yourschool.com/privkey.pem;
-
-       location / {
-           proxy_pass http://backend:8000;
-           proxy_set_header Host $host;
-           # ... standard headers ...
-       }
+   location / {
+       proxy_pass http://127.0.0.1:8000;
+       proxy_set_header Host $host;
+       # ... other headers ...
    }
    ```
 
@@ -143,11 +147,13 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,https://yourschool.com
 ## 5. Deployment Commands
 
 ### Build and Start
+
 ```bash
 docker compose up -d --build
 ```
 
 ### Initial Data Setup (Run Once)
+
 ```bash
 # 1. Migrate Database
 docker compose exec backend python manage.py migrate
@@ -170,7 +176,9 @@ docker compose exec backend python populate_seo.py
 ## 6. Maintenance & Updates
 
 ### Updating Code
+
 To deploy new changes from GitHub:
+
 ```bash
 # 1. Pull changes
 git pull origin main
@@ -183,6 +191,7 @@ docker compose exec backend python manage.py migrate
 ```
 
 ### Troubleshooting
+
 - **500 Server Error**: Check logs: `docker compose logs -f backend`
 - **Connection Refused**: Check if Nginx is running: `docker compose ps`
 - **Database Connection Error**: Ensure `POSTGRES_HOST=db` in `.env`.
@@ -194,6 +203,7 @@ docker compose exec backend python manage.py migrate
 **⚠️ WARNING: Use this ONLY if you have refactored models and need to reset the database.**
 
 ### Pre-requisites
+
 1. **Local Backup**: Ensure you have `backend/db_backup_full_YYYYMMDD_HHMMSS.json` on your local machine.
 2. **Transfer Backup**: Upload the backup to the server.
    ```bash
@@ -202,30 +212,36 @@ docker compose exec backend python manage.py migrate
    ```
 
 ### Reset & Restore Procedure
+
 Connect to your server and run these commands:
 
 1. **Pull Latest Code**
+
    ```bash
    cd school
    git pull origin main
    ```
 
 2. **Rebuild Containers**
+
    ```bash
    docker compose up -d --build --force-recreate
    ```
 
 3. **Reset Database (Wipes ALL Data)**
+
    ```bash
    docker compose exec backend python manage.py flush --no-input
    ```
 
 4. **Apply New Schema**
+
    ```bash
    docker compose exec backend python manage.py migrate
    ```
 
 5. **Restore Data**
+
    ```bash
    docker compose exec backend python manage.py loaddata backup.json
    ```
