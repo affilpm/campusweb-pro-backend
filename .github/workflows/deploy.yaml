@@ -1,11 +1,11 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
+  # push:
+  #   branches: [ "main" ]
+  #   paths-ignore:
+  #     - '**.md'
+  #     - '.gitignore'
   workflow_dispatch:
 
 jobs:
