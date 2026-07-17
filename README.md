@@ -275,8 +275,4 @@ Go to your **Cloudflare Zero Trust Dashboard** -> **Tunnels**:
 2. Add a hostname (e.g., `your-backend-api-domain.com`).
 3. Set the service type to **`HTTP`** and URL to **`nginx:80`** (using internal Docker service routing).
 
-Your server is now secure and online at your domain!
 
-## 📄 License
-
-MIT License
