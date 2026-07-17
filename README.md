@@ -196,11 +196,21 @@ REFRESH_TOKEN_COOKIE_SAMESITE = 'Lax'   # CSRF protection
 ```env
 SECRET_KEY=your-django-secret-key
 DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
+ALLOWED_HOSTS=localhost,127.0.0.1,backendgreenvalley.affilpm.com
 DATABASE_URL=postgres://...
-CORS_ALLOWED_ORIGINS=http://localhost:3000
+CORS_ALLOWED_ORIGINS=http://localhost:3000,https://backendgreenvalley.affilpm.com
 ACCESS_TOKEN_LIFETIME_MINUTES=15
 REFRESH_TOKEN_LIFETIME_DAYS=7
+
+# Cloudflare R2 Settings
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+R2_BUCKET_NAME=your-bucket-name
+R2_ENDPOINT_URL=https://<account-id>.r2.cloudflarestorage.com
+R2_CUSTOM_DOMAIN=https://mediagreenvalley.affilpm.com
+
+# Cloudflare Tunnel Configuration
+TUNNEL_TOKEN=your-cloudflare-tunnel-token
 ```
 
 ### Frontend (.env.local)
@@ -210,29 +220,62 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ## 🚢 Deployment
 
-The project uses a **Hybrid Deployment Strategy** automation via **GitHub Actions** and **Docker Hub**.
+The project is containerized using **Docker** and secured behind a **Cloudflare Tunnel** with **Nginx** acting as a reverse proxy. This setup isolates the host ports from the public internet, routing all traffic through Cloudflare's secure network.
 
-### Automated Workflow
-1.  **Push to `main`**: Triggers `.github/workflows/deploy.yml`.
-2.  **Build**: GitHub builds the Docker image and pushes it to [Docker Hub](https://hub.docker.com/r/affil/school-backend).
-3.  **Deploy**: GitHub connects to your DigitalOcean droplet via SSH and runs:
-    ```bash
-    git pull origin main       # Updates config (docker-compose.yml)
-    docker compose pull backend # Downloads new app code
-    docker compose up -d       # Restarts containers
-    ```
+### How to Deploy from Git (For Others)
 
-### Manual Deployment
-If CI/CD fails, you can deploy manually from your machine:
+To clone and spin up this deployment environment on a new machine:
+
+#### 1. Clone the Repository
 ```bash
-# 1. Build and Push
-cd backend
-docker build --platform linux/amd64 -t affil/school-backend:latest .
-docker push affil/school-backend:latest
-
-# 2. Update Server
-ssh root@your-server-ip "cd ~/school && docker compose pull && docker compose up -d"
+git clone https://github.com/affilpm/campusweb-pro-backend.git
+cd campusweb-pro-backend
 ```
+
+#### 2. Configure Environment Variables
+Create a `.env` file based on `.env.example`:
+```bash
+cp .env.example .env
+```
+Open `.env` and fill in your secrets, including:
+* Django settings (`SECRET_KEY`, `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`).
+* Database credentials (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`).
+* Cloudflare R2 Credentials (`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, etc.).
+* **Cloudflare Tunnel Token** (`TUNNEL_TOKEN`).
+
+#### 3. Update Nginx Server Name
+Open `nginx/default.conf` and update `server_name` to match your domain:
+```nginx
+server_name backendgreenvalley.affilpm.com localhost;
+```
+
+#### 4. Spin up the Containers
+Run Docker Compose in detached mode:
+```bash
+docker compose up -d
+```
+This builds/downloads and runs PostgreSQL (`db`), Django (`backend`), Nginx (`nginx`), and Cloudflare Tunnel (`tunnel`).
+
+#### 5. Collect Static Files (R2 Upload)
+To copy your Django static files to your Cloudflare R2 bucket:
+```bash
+docker compose exec backend python manage.py collectstatic --noinput
+```
+
+#### 6. Initialize Database and Create Admin
+Run database migrations and create a superuser for the admin panel:
+```bash
+docker compose exec backend python manage.py migrate
+docker compose exec backend python manage.py createsuperuser
+```
+
+#### 7. Set Up Hostname Routing in Cloudflare
+Go to your **Cloudflare Zero Trust Dashboard** -> **Tunnels**:
+1. Select your Tunnel and go to **Public Hostnames**.
+2. Add a hostname (e.g., `backendgreenvalley.affilpm.com`).
+3. Set the service type to **`HTTP`** and URL to **`nginx:80`** (using internal Docker service routing).
+
+Your server is now secure and online at your domain!
 
 ## 📄 License
 
