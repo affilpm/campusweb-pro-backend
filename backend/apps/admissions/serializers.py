@@ -1,7 +1,9 @@
 from rest_framework import serializers
+from apps.core.serializers import URLSafeImageMixin
+
 from .models import AdmissionSettings, AdmissionStep
 
-class AdmissionStepAdminSerializer(serializers.ModelSerializer):
+class AdmissionStepAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = AdmissionStep
         fields = '__all__'
@@ -31,7 +33,9 @@ class AdmissionSettingsPublicSerializer(serializers.ModelSerializer):
             'steps'
         ]
 
-class AdmissionSettingsAdminSerializer(serializers.ModelSerializer):
+
+class AdmissionSettingsAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = AdmissionSettings
         fields = '__all__'
+

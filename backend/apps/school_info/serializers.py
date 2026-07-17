@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from apps.core.serializers import URLSafeImageMixin
+
 from .models import (
     SiteSettings, VisionMission, PrincipalMessage, QuickLink,
     AboutPage, TimelineEvent, ManagementMember,
@@ -9,7 +11,7 @@ from .models import (
 
 # --- Site Settings ---
 
-class SiteSettingsAdminSerializer(serializers.ModelSerializer):
+class SiteSettingsAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     address = serializers.CharField(source='school_address', required=False, allow_blank=True)
     phone = serializers.CharField(source='school_phone', required=False, allow_blank=True)
     email = serializers.EmailField(source='school_email', required=False, allow_blank=True)
@@ -92,7 +94,7 @@ class PrincipalMessagePublicSerializer(serializers.ModelSerializer):
             return obj.photo.url
         return None
 
-class PrincipalMessageAdminSerializer(serializers.ModelSerializer):
+class PrincipalMessageAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = PrincipalMessage
         fields = '__all__'
@@ -143,17 +145,17 @@ class ManagementMemberPublicSerializer(serializers.ModelSerializer):
         return None
 
 # Admin Serializers for About Page
-class AboutPageAdminSerializer(serializers.ModelSerializer):
+class AboutPageAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = AboutPage
         fields = '__all__'
 
-class TimelineEventAdminSerializer(serializers.ModelSerializer):
+class TimelineEventAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = TimelineEvent
         fields = '__all__'
 
-class ManagementMemberAdminSerializer(serializers.ModelSerializer):
+class ManagementMemberAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = ManagementMember
         fields = '__all__'
@@ -275,7 +277,7 @@ class PageSEOPublicSerializer(serializers.ModelSerializer):
             return obj.og_image.url
         return None
 
-class PageSEOAdminSerializer(serializers.ModelSerializer):
+class PageSEOAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = PageSEO
         fields = '__all__'
@@ -292,30 +294,30 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
         model = ContactSubmission
         fields = ['name', 'email', 'phone', 'subject', 'message']
 
-class ContactPageAdminSerializer(serializers.ModelSerializer):
+class ContactPageAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = ContactPage
         fields = '__all__'
 
-class ContactSubmissionAdminSerializer(serializers.ModelSerializer):
+class ContactSubmissionAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = ContactSubmission
         fields = '__all__'
 
 # --- Quick Links ---
-class QuickLinkAdminSerializer(serializers.ModelSerializer):
+class QuickLinkAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = QuickLink
         fields = '__all__'
 
 # --- Testimonials ---
-class TestimonialAdminSerializer(serializers.ModelSerializer):
+class TestimonialAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Testimonial
         fields = '__all__'
 
 # --- Achievements ---
-class AchievementAdminSerializer(serializers.ModelSerializer):
+class AchievementAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Achievement
         fields = '__all__'
@@ -331,12 +333,12 @@ class FacilityImageCreateSerializer(serializers.ModelSerializer):
         model = FacilityImage
         exclude = ['facility']
 
-class FacilityImageAdminSerializer(serializers.ModelSerializer):
+class FacilityImageAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = FacilityImage
         exclude = ['facility']
 
-class FacilityAdminSerializer(serializers.ModelSerializer):
+class FacilityAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     gallery_images = FacilityImageAdminSerializer(many=True, read_only=True)
     image = serializers.ImageField(source='cover_image', read_only=True)
 
@@ -345,27 +347,27 @@ class FacilityAdminSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # --- Public Disclosure ---
-class GeneralInfoAdminSerializer(serializers.ModelSerializer):
+class GeneralInfoAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = GeneralInfo
         fields = '__all__'
 
-class ResultsAcademicsAdminSerializer(serializers.ModelSerializer):
+class ResultsAcademicsAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = ResultsAcademics
         fields = '__all__'
 
-class InfrastructureAdminSerializer(serializers.ModelSerializer):
+class InfrastructureAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Infrastructure
         fields = '__all__'
 
-class FeesAdminSerializer(serializers.ModelSerializer):
+class FeesAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Fees
         fields = '__all__'
 
-class DocumentationAdminSerializer(serializers.ModelSerializer):
+class DocumentationAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Documentation
         fields = '__all__'

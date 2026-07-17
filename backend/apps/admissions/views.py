@@ -60,6 +60,7 @@ class AdmissionSettingsAdminView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        print("Admissions PUT Error:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request):

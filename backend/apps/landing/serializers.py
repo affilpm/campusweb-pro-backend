@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from apps.core.serializers import URLSafeImageMixin
+
 from .models import HeroSection, HomeAboutSection, AcademicHighlight
 from apps.school_info.serializers import (
     SiteSettingsPublicSerializer, AboutPagePublicSerializer, 
@@ -35,17 +37,17 @@ class HomeAboutPublicSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
-class HomeAboutAdminSerializer(serializers.ModelSerializer):
+class HomeAboutAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = HomeAboutSection
         fields = '__all__'
 
-class AcademicHighlightAdminSerializer(serializers.ModelSerializer):
+class AcademicHighlightAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = AcademicHighlight
         fields = '__all__'
 
-class HeroSectionAdminSerializer(serializers.ModelSerializer):
+class HeroSectionAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = HeroSection
         fields = '__all__'

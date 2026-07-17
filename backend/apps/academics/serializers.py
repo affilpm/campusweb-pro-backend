@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from apps.core.serializers import URLSafeImageMixin
+
 from .models import AcademicsPage, ClassCategory, Subject
 
 class ClassCategoryPublicSerializer(serializers.ModelSerializer):
@@ -43,17 +45,17 @@ class AcademicsPagePublicSerializer(serializers.ModelSerializer):
         return None
 
 # Admin Serializers
-class AcademicsPageAdminSerializer(serializers.ModelSerializer):
+class AcademicsPageAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = AcademicsPage
         fields = '__all__'
 
-class ClassCategoryAdminSerializer(serializers.ModelSerializer):
+class ClassCategoryAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = ClassCategory
         fields = '__all__'
 
-class SubjectAdminSerializer(serializers.ModelSerializer):
+class SubjectAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = '__all__'

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from apps.core.serializers import URLSafeImageMixin
+
 from .models import Notice, Event
 
 class NoticePublicSerializer(serializers.ModelSerializer):
@@ -26,12 +28,12 @@ class EventPublicSerializer(serializers.ModelSerializer):
         return None
 
 # Admin Serializers
-class NoticeAdminSerializer(serializers.ModelSerializer):
+class NoticeAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Notice
         fields = '__all__'
 
-class EventAdminSerializer(serializers.ModelSerializer):
+class EventAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = '__all__'

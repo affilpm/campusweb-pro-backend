@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from apps.core.serializers import URLSafeImageMixin
+
 from .models import GalleryCategory, GalleryImage
 
 class GalleryCategoryPublicSerializer(serializers.ModelSerializer):
@@ -20,12 +22,12 @@ class GalleryImagePublicSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
-class GalleryCategoryAdminSerializer(serializers.ModelSerializer):
+class GalleryCategoryAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = GalleryCategory
         fields = '__all__'
 
-class GalleryImageAdminSerializer(serializers.ModelSerializer):
+class GalleryImageAdminSerializer(URLSafeImageMixin, serializers.ModelSerializer):
     class Meta:
         model = GalleryImage
         fields = '__all__'
