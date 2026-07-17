@@ -196,9 +196,9 @@ REFRESH_TOKEN_COOKIE_SAMESITE = 'Lax'   # CSRF protection
 ```env
 SECRET_KEY=your-django-secret-key
 DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1,backendgreenvalley.affilpm.com
+ALLOWED_HOSTS=localhost,127.0.0.1,your-backend-api-domain.com
 DATABASE_URL=postgres://...
-CORS_ALLOWED_ORIGINS=http://localhost:3000,https://backendgreenvalley.affilpm.com
+CORS_ALLOWED_ORIGINS=http://localhost:3000,https://your-backend-api-domain.com
 ACCESS_TOKEN_LIFETIME_MINUTES=15
 REFRESH_TOKEN_LIFETIME_DAYS=7
 
@@ -207,7 +207,7 @@ R2_ACCESS_KEY_ID=your-r2-access-key-id
 R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
 R2_BUCKET_NAME=your-bucket-name
 R2_ENDPOINT_URL=https://<account-id>.r2.cloudflarestorage.com
-R2_CUSTOM_DOMAIN=https://mediagreenvalley.affilpm.com
+R2_CUSTOM_DOMAIN=https://your-media-r2-domain.com
 
 # Cloudflare Tunnel Configuration
 TUNNEL_TOKEN=your-cloudflare-tunnel-token
@@ -246,7 +246,7 @@ Open `.env` and fill in your secrets, including:
 #### 3. Update Nginx Server Name
 Open `nginx/default.conf` and update `server_name` to match your domain:
 ```nginx
-server_name backendgreenvalley.affilpm.com localhost;
+server_name your-backend-api-domain.com localhost;
 ```
 
 #### 4. Spin up the Containers
@@ -272,7 +272,7 @@ docker compose exec backend python manage.py createsuperuser
 #### 7. Set Up Hostname Routing in Cloudflare
 Go to your **Cloudflare Zero Trust Dashboard** -> **Tunnels**:
 1. Select your Tunnel and go to **Public Hostnames**.
-2. Add a hostname (e.g., `backendgreenvalley.affilpm.com`).
+2. Add a hostname (e.g., `your-backend-api-domain.com`).
 3. Set the service type to **`HTTP`** and URL to **`nginx:80`** (using internal Docker service routing).
 
 Your server is now secure and online at your domain!
