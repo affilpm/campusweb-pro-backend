@@ -128,16 +128,17 @@ class Command(BaseCommand):
         s.school_logo = "placeholder/gvps_logo.png"
         s.favicon = "placeholder/gvps_favicon.png"
 
-        s.school_hours = (
-            "Monday – Friday: 8:30 AM – 3:30 PM\n"
-            "Saturday: 8:30 AM – 12:30 PM\n"
-            "Sunday: Closed"
-        )
-        s.office_hours = (
-            "Monday – Friday: 9:00 AM – 4:30 PM\n"
-            "Saturday: 9:00 AM – 1:00 PM\n"
-            "Sunday: Closed"
-        )
+        import json
+        s.school_hours = json.dumps([
+            {"day": "Monday – Friday", "time": "8:30 AM – 3:30 PM"},
+            {"day": "Saturday", "time": "8:30 AM – 12:30 PM"},
+            {"day": "Sunday", "time": "Closed"}
+        ])
+        s.office_hours = json.dumps([
+            {"day": "Monday – Friday", "time": "9:00 AM – 4:30 PM"},
+            {"day": "Saturday", "time": "9:00 AM – 1:00 PM"},
+            {"day": "Sunday", "time": "Closed"}
+        ])
 
         s.facebook_url = "https://facebook.com/greenvalleypublicschool"
         s.instagram_url = "https://instagram.com/gvps_official"

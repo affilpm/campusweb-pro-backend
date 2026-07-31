@@ -1,6 +1,6 @@
 # 🔐 School Management System
 
-A secure, production-ready school management system built with **Django + DRF** backend and **Next.js** frontend.
+A secure, production-ready school management system built with **Django 5.1 + DRF** backend and **Next.js 16 (React 19)** frontend.
 
 ## 📋 Table of Contents
 
@@ -20,14 +20,15 @@ A secure, production-ready school management system built with **Django + DRF** 
 └─────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────┐       HTTP/REST        ┌─────────────────────────┐
-│   Next.js       │ ◄────────────────────► │   Django + DRF          │
+│   Next.js 16    │ ◄────────────────────► │   Django 5.1 + DRF      │
 │   Frontend      │    withCredentials     │   Backend               │
 │   (Port 3000)   │                        │   (Port 8000)           │
 ├─────────────────┤                        ├─────────────────────────┤
-│ • Admin Login   │                        │ • JWT Authentication    │
-│ • Dashboard     │                        │ • SimpleJWT             │
-│ • Zustand Store │                        │ • Token Blacklist       │
-│ • Axios Client  │                        │ • Custom AdminUser      │
+│ • App Router    │                        │ • JWT Authentication    │
+│ • Admin & Public│                        │ • SimpleJWT             │
+│ • Zustand 5     │                        │ • Token Blacklist       │
+│ • Tailwind v4   │                        │ • Custom AdminUser      │
+│ • Framer Motion │                        │ • PostgreSQL Database   │
 └─────────────────┘                        └─────────────────────────┘
 ```
 
@@ -36,21 +37,23 @@ A secure, production-ready school management system built with **Django + DRF** 
 ```
 .
 ├── backend/                    # Django Backend
-│   ├── apps/                   # Django Apps (academics, authentication, core, etc.)
+│   ├── apps/                   # Django Apps (academics, admissions, authentication, communication, core, gallery, landing, school_info)
 │   ├── config/                 # Django project settings
 │   │   ├── settings.py         # Main configuration
 │   │   └── urls.py             # Root URL routing
+│   ├── requirements.txt        # Backend dependencies
 │   ├── .env                    # Environment variables
 │   └── Dockerfile              # Setup for containerization
 │
-└── frontend/                   # Next.js Frontend
-    ├── src/
-    │   ├── app/                # App Router (Admin & Public)
-    │   ├── components/         # Reusable Components
-    │   ├── lib/                # API & Types
-    │   └── stores/             # Zustand Stores
-    ├── package.json
-    └── .env.local              # Frontend env variables
+└── frontend-school/            # Frontend Directory
+    └── frontend/               # Next.js 16 Frontend
+        ├── src/
+        │   ├── app/            # App Router (Admin & Public)
+        │   ├── components/     # Reusable Components
+        │   ├── lib/            # API & Types
+        │   └── stores/         # Zustand Stores
+        ├── package.json        # Frontend dependencies
+        └── .env.local          # Frontend env variables
 ```
 
 ## 🚀 Getting Started
@@ -70,7 +73,8 @@ A secure, production-ready school management system built with **Django + DRF** 
 2. **Run Migrations & Server**:
    ```bash
    python manage.py migrate
-   python manage.py createdefaultadmin
+   # (Optional) Create default admin if your custom command exists:
+   # python manage.py createdefaultadmin
    python manage.py runserver
    ```
    Backend will run at: `http://localhost:8000`
@@ -79,7 +83,7 @@ A secure, production-ready school management system built with **Django + DRF** 
 
 1. **Install & Run**:
    ```bash
-   cd frontend
+   cd frontend-school/frontend
    npm install
    npm run dev
    ```
@@ -192,7 +196,7 @@ REFRESH_TOKEN_COOKIE_SAMESITE = 'Lax'   # CSRF protection
 
 ## 📝 Environment Variables
 
-### Backend (.env)
+### Backend (`backend/.env`)
 ```env
 SECRET_KEY=your-django-secret-key
 DEBUG=True
@@ -213,16 +217,16 @@ R2_CUSTOM_DOMAIN=https://your-media-r2-domain.com
 TUNNEL_TOKEN=your-cloudflare-tunnel-token
 ```
 
-### Frontend (.env.local)
+### Frontend (`frontend-school/frontend/.env.local`)
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 ## 🚢 Deployment
 
-The project is containerized using **Docker** and secured behind a **Cloudflare Tunnel** with **Nginx** acting as a reverse proxy. This setup isolates the host ports from the public internet, routing all traffic through Cloudflare's secure network.
+The project is structured with a containerized **Django Backend** (typically secured behind a Cloudflare Tunnel) and a **Next.js Frontend** which can be deployed to standard Node.js hosting providers like Vercel.
 
-### How to Deploy from Git (For Others)
+### Deploying the Backend (Docker & Cloudflare)
 
 To clone and spin up this deployment environment on a new machine:
 
@@ -237,11 +241,7 @@ Create a `.env` file based on `.env.example`:
 ```bash
 cp .env.example .env
 ```
-Open `.env` and fill in your secrets, including:
-* Django settings (`SECRET_KEY`, `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`).
-* Database credentials (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`).
-* Cloudflare R2 Credentials (`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, etc.).
-* **Cloudflare Tunnel Token** (`TUNNEL_TOKEN`).
+Open `.env` and fill in your secrets, including Django settings, Database credentials, R2 credentials, and your **Cloudflare Tunnel Token** (`TUNNEL_TOKEN`).
 
 #### 3. Update Nginx Server Name
 Open `nginx/default.conf` and update `server_name` to match your domain:
@@ -250,29 +250,31 @@ server_name your-backend-api-domain.com localhost;
 ```
 
 #### 4. Spin up the Containers
-Run Docker Compose in detached mode:
 ```bash
 docker compose up -d
 ```
-This builds/downloads and runs PostgreSQL (`db`), Django (`backend`), Nginx (`nginx`), and Cloudflare Tunnel (`tunnel`).
+This runs PostgreSQL (`db`), Django (`backend`), Nginx (`nginx`), and Cloudflare Tunnel (`tunnel`).
 
-#### 5. Collect Static Files (R2 Upload)
-To copy your Django static files to your Cloudflare R2 bucket:
+#### 5. Collect Static Files & Setup DB
 ```bash
 docker compose exec backend python manage.py collectstatic --noinput
-```
-
-#### 6. Initialize Database and Create Admin
-Run database migrations and create a superuser for the admin panel:
-```bash
 docker compose exec backend python manage.py migrate
 docker compose exec backend python manage.py createsuperuser
 ```
 
-#### 7. Set Up Hostname Routing in Cloudflare
+#### 6. Set Up Hostname Routing in Cloudflare
 Go to your **Cloudflare Zero Trust Dashboard** -> **Tunnels**:
 1. Select your Tunnel and go to **Public Hostnames**.
 2. Add a hostname (e.g., `your-backend-api-domain.com`).
 3. Set the service type to **`HTTP`** and URL to **`nginx:80`** (using internal Docker service routing).
 
+### Deploying the Frontend (Vercel Recommended)
 
+1. Push your code to your GitHub repository.
+2. Log in to [Vercel](https://vercel.com) and click **Add New Project**.
+3. Import your repository, and ensure the **Root Directory** is set to `frontend-school/frontend`.
+4. In the **Environment Variables** section, add the following key-value pairs:
+   * `NEXT_PUBLIC_API_URL` = `https://your-backend-api-domain.com`
+   * `NEXT_PUBLIC_R2_URL` = `https://your-media-r2-domain.com`
+   * `NEXT_PUBLIC_APP_URL` = `https://your-frontend-domain.com`
+5. Click **Deploy**. Vercel will build and serve your Next.js application automatically with built-in SSL.
