@@ -1,6 +1,6 @@
-# 🔐 School Management System - Backend
+# 🔐 Public School Website - Backend
 
-A secure, production-ready backend for the School Management System, built with **Django 5.1 + DRF**.
+A secure, production-ready backend for the Public School Website, built with **Django 5.1 + DRF**.
 
 > Note: This repository contains only the Backend API code. The frontend Next.js application is maintained in a separate repository.
 
