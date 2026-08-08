@@ -2,11 +2,12 @@
 
 A secure, production-ready backend for the Public School Website, built with **Django 5.1 + DRF**.
 
-> Note: This repository contains only the Backend API code. The frontend Next.js application is maintained in a separate repository.
+> Note: This repository section contains only the Backend API code. The frontend Next.js application is maintained in the `frontend-school/` directory.
 
 ## 📋 Table of Contents
 
 - [Architecture](#architecture)
+- [Backend Applications & Features](#backend-applications--features)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [API Reference](#api-reference)
@@ -25,7 +26,7 @@ The backend provides a RESTful API powered by Django REST Framework (DRF). It ma
 
 ┌─────────────────┐       HTTP/REST        ┌─────────────────────────┐
 │   Next.js 16    │ ◄────────────────────► │   Django 5.1 + DRF      │
-│  (Separate Repo)│    withCredentials     │   Backend (This Repo)   │
+│ (frontend-school)  withCredentials     │   Backend (This Repo)   │
 ├─────────────────┤                        ├─────────────────────────┤
 │ • App Router    │                        │ • JWT Authentication    │
 │ • Zustand 5     │                        │ • SimpleJWT             │
@@ -35,12 +36,39 @@ The backend provides a RESTful API powered by Django REST Framework (DRF). It ma
 └─────────────────┘                        └─────────────────────────┘
 ```
 
+## 🛠 Backend Applications & Features
+
+The Django backend is modularized into several specific applications representing the features of the school website:
+
+* **`academics`**: Models for Classes, Subjects, Curriculums, and Results.
+* **`admissions`**: Configurations for Admission Settings, Process Steps, and Forms.
+* **`authentication`**: Custom `AdminUser` model, Role-based permissions, and JWT Authentication mechanisms.
+* **`communication`**: Management of Notices, Announcements, and Events.
+* **`gallery`**: Management of Gallery Categories and Event Images.
+* **`landing`**: Dynamic configurations for Hero Banners and Statistics.
+* **`school_info`**: Comprehensive configuration for the school, including:
+  * Global Site Settings & SEO configuration
+  * Vision & Mission statements
+  * Principal's Message & Testimonials
+  * Facility configurations (Interactive lists with images)
+  * Infrastructure, General Information, and Achievements
+  * Fees documentation
+  * Contact Page settings & dynamic Contact Submissions handling
+
 ## 📁 Project Structure
 
 ```
 .
 └── backend/                    # Django Backend Application
-    ├── apps/                   # Django Apps (academics, admissions, authentication, communication, core, gallery, landing, school_info)
+    ├── apps/                   # Modular Django Apps
+    │   ├── academics/
+    │   ├── admissions/
+    │   ├── authentication/
+    │   ├── communication/
+    │   ├── core/
+    │   ├── gallery/
+    │   ├── landing/
+    │   └── school_info/
     ├── config/                 # Django project settings
     │   ├── settings.py         # Main configuration
     │   └── urls.py             # Root URL routing
@@ -87,6 +115,8 @@ The backend provides a RESTful API powered by Django REST Framework (DRF). It ma
 | POST | `/api/admin/auth/refresh/` | Refresh access token |
 | GET | `/api/admin/auth/me/` | Get current user |
 | POST | `/api/admin/auth/verify/` | Verify access token |
+
+*(Other application API endpoints are exposed for the Next.js frontend to consume dynamically based on the modules listed in Features).*
 
 ## 🔄 Authentication Flow
 
