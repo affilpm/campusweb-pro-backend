@@ -58,12 +58,13 @@ services:
     depends_on:
       - backend
 
-  tunnel:
+  greenvalley_tunnel:
     image: cloudflare/cloudflared:latest
-    restart: always
-    command: tunnel --no-autoupdate run
+    container_name: greenvalley_tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --protocol http2 --loglevel debug run
     environment:
-      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
       - nginx
 
